@@ -31,7 +31,8 @@ const Themes = {
             height: 50,
             borderRadius: 10,
             backgroundColor: colors.primary,
-            marginVertical: 10,
+            marginBottom: 10,
+            flexDirection: "row",
         },
         Text: {
             fontSize: 14,
@@ -85,7 +86,7 @@ const Themes = {
         color: colors.primary,
         fontSize: 24,
         fontWeight: "bold",
-        width: 320,
+        marginVertical: 20,
     },
     buttonOutlineGray: {
         TouchableOpacity: {
@@ -166,7 +167,7 @@ const Themes = {
         TouchableOpacity: {
             alignItems: "center",
             justifyContent: "center",
-            width: 80,
+            width: 40,
             height: 40,
             borderRadius: 25,
             backgroundColor: colors.transparent,
@@ -220,11 +221,11 @@ const Themes = {
         },
     },
     label: {
-        color: colors.gray,
+        color: colors.primary,
         fontSize: 14,
         fontWeight: "bold",
         width: 320,
-        marginVertical: 10,
+        marginBottom: 10,
     },
     flex: {
         flexDirection: "row",

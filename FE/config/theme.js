@@ -233,6 +233,14 @@ const Themes = {
         alignItems: "space-around",
         justifyContent: "space-around",
     },
+    logo: {
+        height: 180,
+        width: 300,
+    },
+    banner: {
+        width: 420,
+        height: 300,
+    }
 };
 
 export default Themes;

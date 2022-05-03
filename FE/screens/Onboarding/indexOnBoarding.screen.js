@@ -1,64 +1,58 @@
-import { View, TextInput, Text, Alert } from "react-native";
-import Button from "../../components/Button.component";
-import React, { useState } from "react";
-import { useTheme } from "@react-navigation/native";
-import Link from "../../components/Link.component";
+import { View, Image, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import Themes from "../../config/theme";
+import Loadding from "./../../components/Loadding.component";
 
-import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import Loadding from "../../components/Loadding.component";
+import Logo from "./../../assets/images/logo.png";
+import Banner from "./../../assets/images/onboard1.png";
+import Button from "./../../components/Button.component";
 
 const IndexOnBoarding = () => {
-    const Theme = useTheme();
-    const [show, setShow] = useState(false);
-    
+    const [load, setLoad] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoad(false);
+        }, 4000);
+    });
+
     return (
-        <View style={Theme.container}>
-            <Text style={Theme.headding}>Create Account</Text>
-            <Text style={Theme.label}>Email</Text>
-            <View style={Theme.inputIconWarning}>
-                <TextInput style={Theme.input} placeholder="Email ID" />
-                <View style={Theme.icon}>
-                    <MIcon name="email" size={16} color={Theme.color.danger} />
+        <View style={Themes.container}>
+            {load ? (
+                <Loadding />
+            ) : (
+                <View style={Themes.container}>
+                    <View>
+                        <Image style={Themes.logo} source={Logo} />
+                    </View>
+                    <Text
+                        style={{
+                            color: Themes.color.gray,
+                            fontSize: 16,
+                            fontWeight: "bold",
+                            marginBottom: 20,
+                        }}
+                    >
+                        Your best friend on every journey
+                    </Text>
+                    <View>
+                        <Image style={Themes.banner} source={Banner} />
+                    </View>
+                    <View
+                        style={{
+                            position: "absolute",
+                            bottom: 50,
+                        }}
+                    >
+                        <Button
+                            title="Getting Started"
+                            onPress={() => {}}
+                            style={Themes.button}
+                        />
+                    </View>
+                    <View style={{height: 100}}></View>
                 </View>
-            </View>
-
-            <Text style={Theme.validate}>Invalid Email</Text>
-
-            <Link
-                style={Theme.link}
-                onPress={() => {}}
-                title="Create an account"
-            />
-
-            <Button title="Getting Started" style={Theme.button} />
-
-            <View style={Theme.flex}>
-                <Button title="Cancel" style={Theme.buttonOutlinePrimary} />
-                <Button title="Next" style={Theme.buttonOutlineSuccess} />
-            </View>
-
-            <View style={Theme.flex}>
-                <Button title="Cancel" style={Theme.buttonGray} />
-                <Button title="Next" style={Theme.buttonSuccess} />
-            </View>
-
-            <View style={Theme.flex}>
-                <Button title="SKIP" style={Theme.buttonTransparent} />
-                <Button title="Next" style={Theme.buttonTransparent} />
-            </View>
-
-            <Button
-                title="Loadding"
-                onPress={() => {
-                    setShow(true);
-                }}
-                style={Theme.button}
-            />
-
-            
-            {(show) ? <Loadding /> : <Text></Text>}
-            
-            
+            )}
         </View>
     );
 };

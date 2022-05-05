@@ -7,12 +7,12 @@ import SplashScreen from './screens/Onboarding/Splash.screen';
 import LoginPage from './screens/Accounts/login.screen';
 import RegisterPage from './screens/Accounts/resgister.screen';
 import HomePage from './screens/Home/index.screen';
-
+import SelectSector from './screens/Home/SelectSector.screen';
 
 export default function App() {
     return (
         <NavigationContainer>
-            <HomePage />
+            <SelectSector />
         </NavigationContainer>
     );
 }

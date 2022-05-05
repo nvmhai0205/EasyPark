@@ -99,6 +99,7 @@ const Themes = {
             marginVertical: 10,
             borderColor: colors.gray,
             borderWidth: 1,
+            marginHorizontal: 10,
         },
         Text: {
             fontSize: 14,
@@ -136,6 +137,7 @@ const Themes = {
             borderRadius: 25,
             backgroundColor: colors.success,
             marginVertical: 10,
+            marginHorizontal: 5,
         },
         Text: {
             fontSize: 14,
@@ -160,6 +162,41 @@ const Themes = {
             fontWeight: "bold",
             letterSpacing: 1,
             color: colors.light,
+        },
+    },
+    buttonMarks: {
+        TouchableOpacity: {
+            alignItems: "center",
+            justifyContent: "center",
+            width: 30,
+            height: 30,
+            borderRadius: 5,
+            backgroundColor: colors.primary,
+        },
+        Text: {
+            fontSize: 14,
+            fontWeight: "bold",
+            letterSpacing: 1,
+            color: colors.light,
+            textTransform: "uppercase",
+        },
+    },
+
+    buttonMarksSelect: {
+        TouchableOpacity: {
+            alignItems: "center",
+            justifyContent: "center",
+            width: 30,
+            height: 30,
+            borderRadius: 5,
+            backgroundColor: colors.success,
+        },
+        Text: {
+            fontSize: 14,
+            fontWeight: "bold",
+            letterSpacing: 1,
+            color: colors.light,
+            textTransform: "uppercase",
         },
     },
 

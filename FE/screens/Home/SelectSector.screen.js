@@ -1,4 +1,11 @@
-import { View, Text, FlatList, Animated } from "react-native";
+import {
+    View,
+    Text,
+    FlatList,
+    Animated,
+    ScrollView,
+    useWindowDimensions,
+} from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 import Themes from "../../config/theme";
 import Button from "../../components/Button.component";
@@ -86,11 +93,67 @@ const SelectSector = () => {
                 </View>
             </View>
 
-            <View style={[Themes.container, {marginTop: 150,}]}>
-                <View style={{
-                    height: 50,
-                }}>
+            <View style={[Themes.container, { marginTop: 140 }]}>
+                <View
+                    style={{
+                        height: 60,
+                        flexDirection: "row",
+                        borderBottomColor: Themes.color.gray,
+                        borderBottomWidth: 1,
+                        marginBottom: 10,
+                    }}
+                >
+                    <ScrollView
+                        style={{
+                            height: 50,
+                            width: useWindowDimensions().width,
+                        }}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                    >
+                        {Sectors.map((item, idx) => {
+                            if (idx !== currentIndex) {
+                                return (
+                                    <Button
+                                        key={idx}
+                                        title={item.name}
+                                        style={Themes.buttonOutlineGray}
+                                        onPress={() => {
+                                            if (slidesRef.current) {
+                                                slidesRef.current.scrollToIndex(
+                                                    {
+                                                        animated: false,
+                                                        index: idx,
+                                                    }
+                                                );
+                                            }
 
+                                            setCurrentIndex(idx);
+                                        }}
+                                    />
+                                );
+                            } else {
+                                return (
+                                    <Button
+                                        key={idx}
+                                        title={item.name}
+                                        style={Themes.buttonSuccess}
+                                        onPress={() => {
+                                            if (slidesRef.current) {
+                                                slidesRef.current.scrollToIndex(
+                                                    {
+                                                        animated: false,
+                                                        index: idx,
+                                                    }
+                                                );
+                                            }
+                                            setCurrentIndex(idx);
+                                        }}
+                                    />
+                                );
+                            }
+                        })}
+                    </ScrollView>
                 </View>
                 <FlatList
                     data={Sectors}
@@ -98,6 +161,7 @@ const SelectSector = () => {
                     horizontal
                     showsHorizontalScrollIndicator
                     pagingEnabled
+                    removeClippedSubviews={true}
                     bounces={false}
                     keyExtractor={(item) => item.id}
                     onScroll={Animated.event(

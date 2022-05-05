@@ -329,7 +329,7 @@ const HomePage = () => {
                             >
                                 <MIcon
                                     name="close"
-                                    size={30}
+                                    size={25}
                                     color={Themes.color.danger}
                                 />
                             </TouchableOpacity>

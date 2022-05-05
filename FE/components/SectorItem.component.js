@@ -1,6 +1,7 @@
 import {
     View,
     Text,
+    Modal,
     useWindowDimensions,
     ScrollView,
     TouchableOpacity,
@@ -8,15 +9,28 @@ import {
 import React from "react";
 import Themes from "../config/theme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Button from "./Button.component";
+import AIcon from "react-native-vector-icons/AntDesign";
 
 const SectorItem = (props) => {
     const { item } = props;
+
+    const [positionInfo, setPositionInfo] = React.useState({
+        sector: "",
+        row: "",
+        position: "",
+    });
+
+    const [modalVisible, setModalVisible] = React.useState(false);
+
+    const [successVisible, setSuccessVisible] = React.useState(false);
+
     return (
         <View
             style={{
-                height: 520,
+                height: 480,
                 width: useWindowDimensions().width,
-                padding: 20,
+                paddingHorizontal: 20,
                 borderRadius: 10,
             }}
         >
@@ -48,8 +62,7 @@ const SectorItem = (props) => {
                                 style={{
                                     height: "100%",
                                     width: "100%",
-                                    backgroundColor:
-                                        Themes.color.primary + "aa",
+                                    backgroundColor: Themes.color.info + "aa",
                                     borderRadius: 10,
                                     flexDirection: "row",
                                     justifyContent: "space-around",
@@ -74,7 +87,7 @@ const SectorItem = (props) => {
                                                 <Icon
                                                     name="car"
                                                     size={30}
-                                                    color={Themes.color.info}
+                                                    color={Themes.color.primary}
                                                 />
                                             </View>
                                         );
@@ -92,13 +105,44 @@ const SectorItem = (props) => {
                                                     borderRadius: 10,
                                                 }}
                                             >
-                                                <TouchableOpacity style={{
-                                                    height: "100%",
-                                                    width: "100%",
-                                                    backgroundColor: Themes.color.success,
-                                                    borderRadius: 10,
-                                                }}>
-
+                                                <TouchableOpacity
+                                                    style={{
+                                                        height: "100%",
+                                                        width: "100%",
+                                                        backgroundColor:
+                                                            Themes.color
+                                                                .success,
+                                                        borderRadius: 10,
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                            "center",
+                                                    }}
+                                                    onPress={() => {
+                                                        setPositionInfo({
+                                                            sector: item.name,
+                                                            row: row.name,
+                                                            position: pos.name,
+                                                        });
+                                                        setModalVisible(
+                                                            !modalVisible
+                                                        );
+                                                    }}
+                                                >
+                                                    <Text
+                                                        style={{
+                                                            color: Themes.color
+                                                                .light,
+                                                            fontSize: 18,
+                                                            fontWeight: "700",
+                                                        }}
+                                                    >
+                                                        {
+                                                            pos.name[
+                                                                pos.name
+                                                                    .length - 1
+                                                            ]
+                                                        }
+                                                    </Text>
                                                 </TouchableOpacity>
                                             </View>
                                         );
@@ -109,6 +153,199 @@ const SectorItem = (props) => {
                     );
                 })}
             </ScrollView>
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#dddddddd",
+                    }}
+                >
+                    <View
+                        style={{
+                            backgroundColor: "white",
+                            borderRadius: 20,
+                            height: 320,
+                            width: 320,
+                            alignItems: "center",
+                            elevation: 100,
+                            paddingHorizontal: 10,
+                        }}
+                    >
+                        <View
+                            style={{
+                                width: 300,
+                                alignItems: "flex-end",
+                                justifyContent: "center",
+                                marginTop: 10,
+                            }}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                }}
+                                onPress={() => {
+                                    setModalVisible(!modalVisible);
+                                }}
+                            >
+                                <Icon
+                                    name="close"
+                                    size={25}
+                                    color={Themes.color.danger}
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "100%",
+                                marginBottom: 20,
+                                marginTop: 10,
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    color: Themes.color.primary,
+                                    fontSize: 20,
+                                    fontWeight: "bold",
+                                    textAlign: "center",
+                                }}
+                            >
+                                Do you want to save current location ?
+                            </Text>
+                        </View>
+
+                        <View
+                            style={{
+                                height: 50,
+                                width: "85%",
+                                borderColor: Themes.color.info,
+                                borderWidth: 1,
+                                borderRadius: 10,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                marginVertical: 20,
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    fontSize: 16,
+                                    color: Themes.color.info,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {positionInfo.sector} - {positionInfo.row} -{" "}
+                                {positionInfo.position}
+                            </Text>
+                        </View>
+
+                        <View
+                            style={{
+                                marginTop: 20,
+                            }}
+                        >
+                            <Button
+                                title="Save"
+                                style={Themes.buttonSuccess}
+                                onPress={() => {
+                                    setSuccessVisible(!successVisible);
+                                    setModalVisible(!modalVisible);
+                                }}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={successVisible}
+                onRequestClose={() => {
+                    setSuccessVisible(!successVisible);
+                }}
+            >
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#dddddddd",
+                    }}
+                >
+                    <View
+                        style={{
+                            backgroundColor: "white",
+                            borderRadius: 20,
+                            height: 320,
+                            width: 320,
+                            alignItems: "center",
+                            elevation: 100,
+                            paddingHorizontal: 10,
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <View
+                            style={{
+                                width: 300,
+                                alignItems: "flex-end",
+                                justifyContent: "center",
+                                marginTop: 10,
+                                position: "absolute",
+                                top: 0,
+                            }}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                }}
+                                onPress={() => {
+                                    setSuccessVisible(!successVisible);
+                                }}
+                            >
+                                <Icon
+                                    name="close"
+                                    size={25}
+                                    color={Themes.color.danger}
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View>
+                            <AIcon
+                                name="checkcircle"
+                                size={70}
+                                color={Themes.color.success + "dd"}
+                            />
+                        </View>
+
+                        <View>
+                            <Text
+                                style={{
+                                    color: Themes.color.primary,
+                                    fontSize: 20,
+                                    fontWeight: "600",
+                                    marginTop: 15,
+                                }}
+                            >
+                                Saving Successfully
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };

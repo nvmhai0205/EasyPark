@@ -12,7 +12,7 @@ import SelectSector from './screens/Home/SelectSector.screen';
 export default function App() {
     return (
         <NavigationContainer>
-            <SelectSector />
+            <HomePage />
         </NavigationContainer>
     );
 }

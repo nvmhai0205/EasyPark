@@ -27,7 +27,7 @@ const HomePage = () => {
     //     return res;
     // };
 
-    const [indexParkSelect, setIndexParkSelect] = React.useState(0);
+    const [indexParkSelect, setIndexParkSelect] = React.useState(-1);
 
     const [locationVisible, setLocationVisible] = React.useState(false);
 

@@ -5,7 +5,7 @@ import OnBoardList from "./../../config/onBoardSlides";
 import OnBoardItem from "../../components/OnBoardItem.component";
 import Button from "../../components/Button.component";
 
-const OnBoarding = () => {
+const OnBoarding = ({ navigation }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef = useRef(null);
@@ -98,6 +98,7 @@ const OnBoarding = () => {
                     title={(currentIndex !== OnBoardList.length - 1) ? "Next" : "Done"}
                     onPress={() => {
                         if (currentIndex === OnBoardList.length - 1) {
+                            navigation.navigate("SplashScreen");
                             return;
                         }
                         if (slidesRef.current) {

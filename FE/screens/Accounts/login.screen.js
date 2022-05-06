@@ -7,7 +7,7 @@ import Link from "../../components/Link.component";
 import Button from "../../components/Button.component";
 
 
-const LoginPage = () => {
+const LoginPage = ({ navigation }) => {
     return (
         <View style={Themes.container}>
             <Image source={Login} style={{ width: 350, height: 250 }} />
@@ -29,13 +29,13 @@ const LoginPage = () => {
             </View>
             <Text style={Themes.validate}></Text>
 
-            <Button title="Log In" onPress={() => {}} style={Themes.button} />
+            <Button title="Log In" onPress={() => {navigation.navigate("Home")}} style={Themes.button} />
 
             <Link style={Themes.link} title="Forgot password ?" onPress={() => {}} />
 
             <View style={{flexDirection: "row", marginTop: 10,}}>
                 <Text>Don't have an account ? </Text>
-                <Link title="Create an account" onPress={() => {}} style={Themes.link} />
+                <Link title="Create an account" onPress={() => {navigation.navigate("SignUp")}} style={Themes.link} />
             </View>
         </View>
     );

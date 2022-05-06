@@ -5,7 +5,7 @@ import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import Link from "../../components/Link.component";
 import Button from "../../components/Button.component";
 
-const RegisterPage = () => {
+const RegisterPage = ({ navigation }) => {
     const [isSelected, setSelection] = useState(false);
     const changeSelected = () => {
         setSelection(!isSelected);
@@ -73,7 +73,7 @@ const RegisterPage = () => {
 
             <View style={{flexDirection: "row", marginTop: 10,}}>
                 <Text>Already have an account ? </Text>
-                <Link title="Sign In" onPress={() => {}} style={Themes.link} />
+                <Link title="Sign In" onPress={() => {navigation.navigate("SignIn")}} style={Themes.link} />
             </View>
 
         </View>

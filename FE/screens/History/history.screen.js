@@ -1,114 +1,41 @@
 import {
     View,
     Text,
-    TextInput,
     Modal,
+    ScrollView,
     TouchableOpacity,
-    StyleSheet,
     Image,
+    StyleSheet,
 } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Themes from "../../config/theme";
 import Button from "../../components/Button.component";
-import MapView, { Callout, Marker, Polyline } from "react-native-maps";
-import { Animated } from "react-native";
+import HistoriList from "./../../config/Historys";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import Avatar from "./../../assets/images/avatar.png";
 import FIcon from "react-native-vector-icons/FontAwesome";
 import F5Icon from "react-native-vector-icons/FontAwesome5";
 import IconM from "react-native-vector-icons/MaterialIcons";
 
-import * as Location from "expo-location";
-import MapViewDirections from "react-native-maps-directions";
-
-import { Makers } from "../../config/Makers";
-import { API_KEY } from "./../../config/GoogleAPI";
-
-const HomePage = ({ navigation }) => {
-    const MarkerAnim = useRef(new Animated.Value(0)).current;
-    const [navtabVisible, setNavtabVisible] = React.useState(false);
-
-    // const [lines, setLines] = React.useState(getLines);
-
-    // const getLines = () => {
-    //     const res = Makers.map((item, index) => {
-    //         return {
-    //             latitude: item.coordinate.latitude,
-    //             longitude: item.coordinate.longitude,
-    //         };
-    //     }, []);
-    //     return res;
-    // };
-
-    const [indexParkSelect, setIndexParkSelect] = React.useState(-1);
-
-    const [locationVisible, setLocationVisible] = React.useState(false);
-
-    const [pin, setPin] = React.useState({
-        latitude: 10.878370824746762,
-        longitude: 106.80629059716131,
-    });
-
-    const [searchVisible, setSearchVisible] = React.useState(false);
-
+const History = ({ navigation }) => {
     const [modalVisible, setModalVisible] = React.useState(false);
-
     const [dataModal, setDataModal] = React.useState({
         id: 0,
         name: "",
-        coordinate: {
-            latitude: 0,
-            longitude: 0,
-        },
-        total: 0,
-        use: 0,
-        timestart: 0,
-        timeend: 0,
+        sector: "",
+        row: "",
+        position: "",
+        time: "",
+        price: 0,
     });
 
-    const MarkerAnimOut = () => {
-        Animated.loop(
-            Animated.timing(MarkerAnim, {
-                toValue: 10,
-                duration: 1000,
-                useNativeDriver: false,
-            })
-        ).start();
-    };
+    const [navtabVisible, setNavtabVisible] = React.useState(false);
 
     const formatPrice = (res) => {
         return res + " VND";
     };
-
-    useEffect(() => {
-        MarkerAnimOut();
-    }, []);
-
-    const getLocation = async () => {
-        try {
-            const { status } =
-                await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                console.log("PERMISSIONS NOT GRANTED!");
-            }
-            const location = await Location.getCurrentPositionAsync();
-            setPin({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-            });
-        } catch (error) {
-            console.log("ERROR");
-        }
-    };
-
     return (
-        <View
-            style={{
-                width: "100%",
-                height: "100%",
-                marginTop: 30,
-            }}
-        >
+        <View style={[Themes.container, { backgroundColor: "#eee" }]}>
             <View
                 style={{
                     position: "absolute",
@@ -158,206 +85,112 @@ const HomePage = ({ navigation }) => {
                                 textAlign: "center",
                             }}
                         >
-                            Home
+                            History Location
                         </Text>
                     </View>
-                    <View style={{ width: "20%", alignItems: "flex-end" }}>
-                        <Button
-                            title=""
-                            style={[Themes.buttonTransparent, { height: 30 }]}
-                            onPress={() => {
-                                setSearchVisible(!searchVisible);
-                            }}
-                            icon="search"
-                            size={30}
-                        />
-                    </View>
+                    <View style={{ width: "20%" }}></View>
                 </View>
-
-                {searchVisible ? (
-                    <View
-                        style={[
-                            Themes.inputIcon,
-                            {
-                                width: "100%",
-                                height: 60,
-                                backgroundColor: "#fff",
-                            },
-                        ]}
-                    >
-                        <View
-                            style={{
-                                width: "100%",
-                                flexDirection: "row",
-                                height: 60,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                paddingHorizontal: 10,
-                            }}
-                        >
-                            <TextInput
-                                style={[
-                                    Themes.input,
-                                    {
-                                        height: 60,
-                                        paddingHorizontal: 10,
-                                        fontSize: 16,
-                                        width: "95%",
-                                    },
-                                ]}
-                                placeholder="Where do you want to go ?"
-                            />
-                            <TouchableOpacity
-                                style={{
-                                    width: 30,
-                                    height: 30,
-                                }}
-                                onPress={() => {
-                                    setSearchVisible(!searchVisible);
-                                }}
-                            >
-                                <MIcon
-                                    name="close"
-                                    size={25}
-                                    color={Themes.color.danger}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                ) : (
-                    <></>
-                )}
             </View>
 
-            {/* Map */}
             <View
                 style={{
                     height: "100%",
                     width: "100%",
-                    marginTop: 90,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 70,
                 }}
             >
-                <MapView
+                <View
                     style={{
-                        width: "100%",
-                        height: "100%",
-                        opacity: 1,
-                        elevation: 0,
-                    }}
-                    initialRegion={{
-                        latitude: pin.latitude,
-                        longitude: pin.longitude,
-                        latitudeDelta: 0.05,
-                        longitudeDelta: 0.05,
+                        height: 550,
+                        width: 400,
+                        paddingHorizontal: 15,
                     }}
                 >
-                    {locationVisible ? (
-                        <Marker
-                            coordinate={pin}
-                            draggable={true}
-                            onDragStart={(e) => {
-                                console.log("Drag start: ", pin);
-                            }}
-                            onDragEnd={(e) => {
-                                setPin({
-                                    latitude: e.nativeEvent.coordinate.latitude,
-                                    longitude:
-                                        e.nativeEvent.coordinate.longitude,
-                                });
-                            }}
-                            showsUserLocation={true}
-                        >
-                            <Animated.View
-                                style={{
-                                    height: 40,
-                                    width: 40,
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    borderRadius: 50,
-                                    borderWidth: MarkerAnim,
-                                    borderColor: Themes.color.info,
-                                    opacity: 0.75,
-                                }}
-                            >
+                    <ScrollView
+                        style={{
+                            height: 450,
+                            width: "100%",
+                            borderRadius: 10,
+                        }}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        {HistoriList.map((item, idx) => {
+                            return (
                                 <View
+                                    key={idx}
                                     style={{
-                                        height: 20,
-                                        width: 20,
-                                        borderRadius: 20,
-                                        backgroundColor: Themes.color.primary,
-                                    }}
-                                ></View>
-                            </Animated.View>
-                        </Marker>
-                    ) : (
-                        <></>
-                    )}
-
-                    {/* List marker */}
-                    {Makers.map((maker, index) => {
-                        return (
-                            <Marker key={index} coordinate={maker.coordinate}>
-                                <View
-                                    style={{
-                                        height: 30,
-                                        width: 30,
-                                        elevation: 100,
-                                        zIndex: 100,
-                                    }}
-                                >
-                                    <Button
-                                        title="P"
-                                        style={
-                                            indexParkSelect === maker.id
-                                                ? Themes.buttonMarksSelect
-                                                : Themes.buttonMarks
-                                        }
-                                        onPress={() => {}}
-                                    />
-                                </View>
-                                <Callout
-                                    style={{
-                                        width: 100,
-                                        height: 50,
-                                        alignItems: "center",
-                                        justifyContent: "center",
+                                        height: 105,
+                                        width: "100%",
+                                        marginBottom: 15,
                                         borderRadius: 10,
-                                    }}
-                                    onPress={() => {
-                                        setModalVisible(!modalVisible);
-                                        setDataModal(maker);
+                                        borderColor: "#ccc",
+                                        borderWidth: 1,
+                                        padding: 10,
                                     }}
                                 >
-                                    <View
+                                    <TouchableOpacity
                                         style={{
-                                            height: 40,
+                                            height: "100%",
                                             width: "100%",
-                                            backgroundColor: Themes.color.info,
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            borderRadius: 10,
+                                        }}
+                                        onPress={() => {
+                                            setModalVisible(!modalVisible);
+                                            setDataModal(item);
                                         }}
                                     >
                                         <Text
                                             style={{
-                                                color: Themes.color.light,
+                                                color: Themes.color.primary,
+                                                fontSize: 16,
                                                 fontWeight: "bold",
                                             }}
                                         >
-                                            View More
+                                            {item.name.length > 40
+                                                ? item.name.slice(0, 40) + "..."
+                                                : item.name}
                                         </Text>
-                                    </View>
-                                </Callout>
-                            </Marker>
-                        );
-                    })}
 
-                    {/* <MapViewDirections
-                        origin={pin}
-                        destination={Makers[0].coordinate}
-                        apikey={API_KEY}
-                    /> */}
-                </MapView>
+                                        <Text
+                                            style={{
+                                                width: "90%",
+                                                color: Themes.color.dark,
+                                                fontSize: 14,
+                                                marginVertical: 5,
+                                            }}
+                                        >
+                                            {item.sector} - {item.row} -{" "}
+                                            {item.position}
+                                        </Text>
+                                        <View
+                                            style={{
+                                                width: "100%",
+                                                flexDirection: "row",
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    width: "90%",
+                                                    color: Themes.color.gray,
+                                                }}
+                                            >
+                                                {item.time}
+                                            </Text>
+                                            <TouchableOpacity>
+                                                <MIcon
+                                                    name="close-circle-outline"
+                                                    size={30}
+                                                    color={Themes.color.danger}
+                                                />
+                                            </TouchableOpacity>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            );
+                        })}
+                    </ScrollView>
+                </View>
             </View>
 
             <Modal
@@ -373,20 +206,20 @@ const HomePage = ({ navigation }) => {
                         flex: 1,
                         justifyContent: "center",
                         alignItems: "center",
+                        height: "100%",
+                        width: "100%",
+                        backgroundColor: "#dddddddd",
                     }}
                 >
                     <View
                         style={{
                             backgroundColor: "white",
                             borderRadius: 20,
-                            height: 380,
+                            height: 320,
                             width: 320,
                             alignItems: "center",
                             elevation: 100,
                             paddingHorizontal: 10,
-                            // backgroundColor: Themes.color.primary,
-                            // borderWidth: 2,
-                            // borderColor: Themes.color.info,
                         }}
                     >
                         <View
@@ -438,9 +271,6 @@ const HomePage = ({ navigation }) => {
                                 width: "100%",
                                 paddingHorizontal: 20,
                                 paddingVertical: 10,
-                                flexDirection: "row",
-                                flexWrap: "wrap",
-                                // backgroundColor: "red",
                                 borderRadius: 50,
                                 borderWidth: 1,
                                 borderColor: Themes.color.info,
@@ -450,19 +280,11 @@ const HomePage = ({ navigation }) => {
                             <Text
                                 style={{
                                     color: Themes.color.dark,
-                                    width: 60,
+                                    textAlign: "center",
                                 }}
                             >
-                                SLOT{" "}
-                            </Text>
-                            <Text
-                                style={{
-                                    color: Themes.color.info,
-                                    width: 100,
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                {dataModal.use} / {dataModal.total}
+                                {dataModal.sector} - {dataModal.row} -{" "}
+                                {dataModal.position}
                             </Text>
                         </View>
 
@@ -471,9 +293,6 @@ const HomePage = ({ navigation }) => {
                                 width: "100%",
                                 paddingHorizontal: 20,
                                 paddingVertical: 10,
-                                flexDirection: "row",
-                                flexWrap: "wrap",
-                                // backgroundColor: "red",
                                 borderRadius: 50,
                                 borderWidth: 1,
                                 borderColor: Themes.color.info,
@@ -483,217 +302,36 @@ const HomePage = ({ navigation }) => {
                             <Text
                                 style={{
                                     color: Themes.color.dark,
-                                    width: 60,
+                                    textAlign: "center",
                                 }}
                             >
-                                PRICE{" "}
+                                {dataModal.time}
                             </Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "100%",
+                                paddingHorizontal: 20,
+                                paddingVertical: 10,
+                                borderRadius: 50,
+                                borderWidth: 1,
+                                borderColor: Themes.color.info,
+                                marginTop: 10,
+                            }}
+                        >
                             <Text
                                 style={{
-                                    color: Themes.color.info,
-                                    width: 100,
-                                    fontWeight: "bold",
+                                    color: Themes.color.dark,
+                                    textAlign: "center",
                                 }}
                             >
                                 {formatPrice(dataModal.price)}
                             </Text>
                         </View>
-
-                        <View
-                            style={{
-                                width: "100%",
-                                paddingHorizontal: 20,
-                                paddingVertical: 10,
-                                flexDirection: "row",
-                                flexWrap: "wrap",
-                                // backgroundColor: "red",
-                                borderRadius: 50,
-                                borderWidth: 1,
-                                borderColor: Themes.color.info,
-                                marginTop: 10,
-                                // marginBottom: 30,
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    color: Themes.color.dark,
-                                    width: 60,
-                                }}
-                            >
-                                TIME{" "}
-                            </Text>
-                            <Text
-                                style={{
-                                    color: Themes.color.info,
-                                    width: 100,
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                {dataModal.timestart}H - {dataModal.timeend}H
-                            </Text>
-                        </View>
-
-                        <View
-                            style={{
-                                bottom: 20,
-                                position: "absolute",
-                                flexDirection: "row",
-                                flexWrap: "wrap",
-                            }}
-                        >
-                            <Button
-                                title={
-                                    indexParkSelect === dataModal.id
-                                        ? "Unselect"
-                                        : "Select"
-                                }
-                                style={{
-                                    TouchableOpacity: {
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        width: 120,
-                                        height: 40,
-                                        borderRadius: 25,
-                                        backgroundColor:
-                                            indexParkSelect === dataModal.id
-                                                ? Themes.color.danger
-                                                : Themes.color.success,
-                                        marginVertical: 10,
-                                        marginHorizontal: 10,
-                                    },
-                                    Text: Themes.buttonSuccess.Text,
-                                }}
-                                onPress={() => {
-                                    if (indexParkSelect === dataModal.id) {
-                                        setIndexParkSelect(0);
-                                    } else {
-                                        setIndexParkSelect(dataModal.id);
-                                    }
-                                }}
-                            />
-
-                            {indexParkSelect === dataModal.id ? (
-                                <Button
-                                    title="View Detail"
-                                    style={{
-                                        TouchableOpacity: {
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            width: 120,
-                                            height: 40,
-                                            borderRadius: 25,
-                                            backgroundColor:
-                                                Themes.color.success,
-                                            marginVertical: 10,
-                                            marginHorizontal: 10,
-                                        },
-                                        Text: Themes.buttonSuccess.Text,
-                                    }}
-                                    onPress={() => {}}
-                                />
-                            ) : (
-                                <></>
-                            )}
-                        </View>
                     </View>
                 </View>
             </Modal>
-
-            <View
-                style={{
-                    height: 40,
-                    width: 40,
-                    position: "absolute",
-                    bottom: 150,
-                    right: 15,
-                    backgroundColor: Themes.color.light,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderColor: "#ddd",
-                    borderWidth: 1,
-                    borderRadius: 20,
-                    shadowColor: "#000",
-                    shadowOffset: {
-                        width: 0,
-                        height: 3,
-                    },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 4,
-
-                    elevation: 1,
-                }}
-            >
-                <TouchableOpacity
-                    onPress={async () => {
-                        await getLocation();
-                        setLocationVisible(true);
-                    }}
-                >
-                    <MIcon
-                        name="crosshairs-gps"
-                        size={30}
-                        color={
-                            locationVisible
-                                ? Themes.color.success
-                                : Themes.color.gray
-                        }
-                    />
-                </TouchableOpacity>
-            </View>
-
-            {indexParkSelect === dataModal.id && modalVisible === false ? (
-                <View
-                    style={{
-                        height: 50,
-                        width: 120,
-                        position: "absolute",
-                        top: 150,
-                        right: 15,
-                    }}
-                >
-                    <Button
-                        title="View Detail"
-                        style={{
-                            TouchableOpacity: {
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: 120,
-                                height: 40,
-                                borderRadius: 25,
-                                backgroundColor: Themes.color.success,
-                                marginVertical: 10,
-                                marginHorizontal: 5,
-                            },
-                            Text: Themes.buttonSuccess.Text,
-                        }}
-                        onPress={() => {}}
-                    />
-
-                    <Button
-                        title="Unselect"
-                        style={{
-                            TouchableOpacity: {
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: 120,
-                                height: 40,
-                                borderRadius: 25,
-                                backgroundColor: Themes.color.danger,
-                                marginVertical: 5,
-                                marginHorizontal: 5,
-                            },
-                            Text: Themes.buttonSuccess.Text,
-                        }}
-                        onPress={() => {
-                            if (indexParkSelect === dataModal.id) {
-                                setIndexParkSelect(0);
-                            }
-                        }}
-                    />
-                </View>
-            ) : (
-                <></>
-            )}
 
             <Modal
                 animationType="fade"
@@ -1013,4 +651,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HomePage;
+export default History;

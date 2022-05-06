@@ -7,7 +7,7 @@ import Logo from "./../../assets/images/logo.png";
 import Banner from "./../../assets/images/onboard1.png";
 import Button from "./../../components/Button.component";
 
-const IndexOnBoarding = () => {
+const IndexOnBoarding = ({ navigation }) => {
     const [load, setLoad] = useState(true);
 
     useEffect(() => {
@@ -17,7 +17,7 @@ const IndexOnBoarding = () => {
     });
 
     return (
-        <View style={Themes.container}>
+        <View style={[Themes.container, {backgroundColor: "#fff"}]}>
             {load ? (
                 <Loadding />
             ) : (
@@ -46,7 +46,7 @@ const IndexOnBoarding = () => {
                     >
                         <Button
                             title="Getting Started"
-                            onPress={() => {}}
+                            onPress={() => {navigation.navigate('OnBoard')}}
                             style={Themes.button}
                         />
                     </View>

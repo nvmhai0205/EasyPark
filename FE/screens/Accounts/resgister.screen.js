@@ -1,14 +1,50 @@
-import { View, Text,  Image, TextInput, StyleSheet } from "react-native";
+import { View, Text, Alert, TextInput, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import Themes from "../../config/theme";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import Link from "../../components/Link.component";
 import Button from "../../components/Button.component";
+import server from "./../../link";
+import axios from "axios";
 
 const RegisterPage = ({ navigation }) => {
     const [isSelected, setSelection] = useState(false);
     const changeSelected = () => {
         setSelection(!isSelected);
+    };
+
+    const [userInput, setUserInput] = React.useState({
+        email: "",
+        password: "",
+        confirmPass: "",
+    });
+
+    const handleChange = (e, name) => {
+        setUserInput({ ...userInput, [name]: e.nativeEvent.text });
+    };
+
+    const handleRegister = () => {
+        if (!isSelected) {
+            Alert.alert("Bạn chưa đồng ý điều khoản");
+        } else if (userInput.password !== userInput.confirmPass) {
+            Alert.alert("Mật khẩu không khớp");
+        } else {
+            Register();
+        }
+    };
+
+    const Register = async () => {
+        try {
+            const data = {
+                "email": userInput.email,
+                "password": userInput.password,
+                "repeat_password": userInput.confirmPass,
+            };
+            const result = await axios.post(`${server}/users`, data);
+            Alert.alert("Đăng ký thành công");
+        } catch (error) {
+            Alert.alert("Đăng ký không thành công");
+        }
     };
 
     return (
@@ -17,16 +53,33 @@ const RegisterPage = ({ navigation }) => {
 
             <Text style={Themes.label}>Email</Text>
             <View style={Themes.inputIcon}>
-                <TextInput style={Themes.input} placeholder="e.g example@gmail.com" />
+                <TextInput
+                    style={Themes.input}
+                    textContentType="emailAddress"
+                    name="email"
+                    placeholder="e.g example@gmail.com"
+                    onChange={(e) => handleChange(e, 'email')}
+                />
                 <View style={Themes.icon}>
-                    <MIcon name="email" size={16} color={Themes.color.primary} />
+                    <MIcon
+                        name="email"
+                        size={16}
+                        color={Themes.color.primary}
+                    />
                 </View>
             </View>
             <Text style={Themes.validate}></Text>
 
             <Text style={Themes.label}>Password</Text>
             <View style={Themes.inputIcon}>
-                <TextInput style={Themes.input} placeholder="e.g Examp!e98" secureTextEntry={true} />
+                <TextInput
+                    style={Themes.input}
+                    placeholder="e.g Examp!e98"
+                    secureTextEntry={true}
+                    textContentType="password"
+                    name="password"
+                    onChange={(e) => handleChange(e, 'password')}
+                />
                 <View style={Themes.icon}>
                     <MIcon name="lock" size={16} color={Themes.color.primary} />
                 </View>
@@ -35,7 +88,14 @@ const RegisterPage = ({ navigation }) => {
 
             <Text style={Themes.label}>Confirm Password</Text>
             <View style={Themes.inputIcon}>
-                <TextInput style={Themes.input} placeholder="Enter Password" secureTextEntry={true} />
+                <TextInput
+                    style={Themes.input}
+                    placeholder="Enter Password"
+                    secureTextEntry={true}
+                    textContentType="password"
+                    name="confirmPass"
+                    onChange={(e) => handleChange(e, 'confirmPass')}
+                />
                 <View style={Themes.icon}>
                     <MIcon name="lock" size={16} color={Themes.color.primary} />
                 </View>
@@ -60,22 +120,45 @@ const RegisterPage = ({ navigation }) => {
                         />
                     )}
                 </View>
-                <View style={{flexDirection: "row"}}>
+                <View style={{ flexDirection: "row" }}>
                     <Text>I agree to the </Text>
-                    <Link title="Terms" onPress={() => {}} style={Themes.link} />
+                    <Link
+                        title="Terms"
+                        onPress={() => {}}
+                        style={Themes.link}
+                    />
                     <Text> and </Text>
-                    <Link title="Privacy policy" onPress={() => {}} style={Themes.link} />
+                    <Link
+                        title="Privacy policy"
+                        onPress={() => {}}
+                        style={Themes.link}
+                    />
                 </View>
             </View>
 
-            <Button title="Create Account" onPress={() => {}} style={Themes.button} />
-            <Button title="Sign Up With Google" onPress={() => {}} style={Themes.button} icon="google" size={20} />
+            <Button
+                title="Create Account"
+                style={Themes.button}
+                onPress={handleRegister}
+            />
+            <Button
+                title="Sign Up With Google"
+                onPress={() => {}}
+                style={Themes.button}
+                icon="google"
+                size={20}
+            />
 
-            <View style={{flexDirection: "row", marginTop: 10,}}>
+            <View style={{ flexDirection: "row", marginTop: 10 }}>
                 <Text>Already have an account ? </Text>
-                <Link title="Sign In" onPress={() => {navigation.navigate("SignIn")}} style={Themes.link} />
+                <Link
+                    title="Sign In"
+                    onPress={() => {
+                        navigation.navigate("SignIn");
+                    }}
+                    style={Themes.link}
+                />
             </View>
-
         </View>
     );
 };

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Themes from "../../config/theme";
 import Setting from "./setting.screen";
 import AccountScreen from "./account.screen";
@@ -10,7 +10,11 @@ import Terms from "./termsofuse.screen";
 
 const Stack = createNativeStackNavigator();
 
+
+
 const IndexSetting = () => {
+    
+
     return (
         <Stack.Navigator
             initialRouteName="index"

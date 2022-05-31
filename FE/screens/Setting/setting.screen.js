@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     Modal,
 } from "react-native";
-import React from "react";
+import React , { useState, useEffect } from "react";
 import Themes from "../../config/theme";
 import Button from "../../components/Button.component";
 
@@ -16,7 +16,49 @@ import FIcon from "react-native-vector-icons/FontAwesome";
 import F5Icon from "react-native-vector-icons/FontAwesome5";
 import IconM from "react-native-vector-icons/MaterialIcons";
 
+import axios from "axios";
+import server from "./../../link";
+import { getItem, deleteItem } from "./../../store/index";
+
 const Setting = ({ navigation }) => {
+
+    const [profile, setProfile] = useState({
+        user: {
+            _id: "",
+            email: "",
+            email: "",
+            history: [],
+            type_account: "free",
+        },
+    });
+
+    const logout = async () => {
+        await deleteItem("user");
+        navigation.navigate("SignIn");
+        setNavtabVisible(!navtabVisible);
+    };
+
+    const getProfile = async () => {
+        try {
+            const userInfo = await getItem("user");
+            const result = await axios.get(
+                `${server}/users/${userInfo.user._id}`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                }
+            );
+            setProfile(result.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        getProfile();
+    },[])
+
     const [navtabVisible, setNavtabVisible] = React.useState(false);
     return (
         <View style={[Themes.container, { backgroundColor: "#eee" }]}>
@@ -25,13 +67,11 @@ const Setting = ({ navigation }) => {
                     position: "absolute",
                     width: "100%",
                     top: 0,
-                    height: 100,
+                    height: 70,
                     backgroundColor: Themes.color.primary + "aa",
-                    borderBottomLeftRadius: 50,
-                    borderBottomRightRadius: 50,
                     opacity: 1,
                     paddingHorizontal: 20,
-                    paddingVertical: 10,
+                    paddingVertical: 20,
                     alignItems: "center",
                     elevation: 1000,
                 }}
@@ -74,7 +114,7 @@ const Setting = ({ navigation }) => {
                         </Text>
                     </View>
                     <View style={{ width: "20%" }}></View>
-                    <View
+                    {/* <View
                         style={{
                             height: 60,
                             position: "absolute",
@@ -91,7 +131,7 @@ const Setting = ({ navigation }) => {
                                 }}
                             />
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                 </View>
             </View>
 
@@ -270,9 +310,12 @@ const Setting = ({ navigation }) => {
                                         fontSize: 16,
                                     }}
                                 >
-                                    Marvis Ighedosa
+                                    { profile.user.email }
                                 </Text>
-                                <Text>marvisighedosa@gmail.com</Text>
+                                <Text style={{
+                                    textTransform: "capitalize",
+                                    color: Themes.color.success
+                                }}>{profile.user.type_account} account</Text>
                             </View>
                         </View>
                         <View
@@ -464,8 +507,7 @@ const Setting = ({ navigation }) => {
                                     Text: Themes.button.Text,
                                 }}
                                 onPress={() => {
-                                    navigation.navigate("SignIn");
-                                    setNavtabVisible(!navtabVisible);
+                                    logout();
                                 }}
                             />
                         </View>

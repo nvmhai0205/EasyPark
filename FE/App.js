@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import IndexOnBoarding from './screens/Onboarding/indexOnBoarding.screen';
@@ -14,14 +14,34 @@ import History from './screens/History/history.screen';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+import { storeItem, getItem } from "./store/index";
+
+
+export default function App({ navigation }) {
+
+    const [pageOnboard, setPageOnboard] = React.useState(true)
+
+    const getAsyncStorage = async () => {
+        const value = await getItem("Onboarding");
+        if (value === null) {
+            storeItem("Onboarding", false)
+            console.log("Hello");
+        } else {
+            setPageOnboard(false)
+        }
+    };
+
+    useEffect(() => {
+        getAsyncStorage();
+    }, [])
+
     return (
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName={"Home"}
+                initialRouteName={(pageOnboard === true) ? "IndexOnBoarding" : "SignIn"}
             >
                 <Stack.Screen name="Home" component={Tabs} />
                 <Stack.Screen name="IndexOnBoarding" component={IndexOnBoarding} />

@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Image,
 } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Themes from "../../config/theme";
 import Button from "../../components/Button.component";
 import MapView, { Callout, Marker, Polyline } from "react-native-maps";
@@ -21,26 +21,16 @@ import IconM from "react-native-vector-icons/MaterialIcons";
 import * as Location from "expo-location";
 import MapViewDirections from "react-native-maps-directions";
 
+import { getItem, deleteItem } from "./../../store/index";
+import axios from "axios";
+import server from "./../../link";
 import { Makers } from "../../config/Makers";
-import { API_KEY } from "./../../config/GoogleAPI";
 
 const HomePage = ({ navigation }) => {
     const MarkerAnim = useRef(new Animated.Value(0)).current;
     const [navtabVisible, setNavtabVisible] = React.useState(false);
 
-    // const [lines, setLines] = React.useState(getLines);
-
-    // const getLines = () => {
-    //     const res = Makers.map((item, index) => {
-    //         return {
-    //             latitude: item.coordinate.latitude,
-    //             longitude: item.coordinate.longitude,
-    //         };
-    //     }, []);
-    //     return res;
-    // };
-
-    const [indexParkSelect, setIndexParkSelect] = React.useState(-1);
+    const [indexParkSelect, setIndexParkSelect] = React.useState("#");
 
     const [locationVisible, setLocationVisible] = React.useState(false);
 
@@ -54,16 +44,19 @@ const HomePage = ({ navigation }) => {
     const [modalVisible, setModalVisible] = React.useState(false);
 
     const [dataModal, setDataModal] = React.useState({
-        id: 0,
-        name: "",
-        coordinate: {
-            latitude: 0,
-            longitude: 0,
+        location: {
+            type: "Point",
+            coordinates: [],
         },
-        total: 0,
-        use: 0,
-        timestart: 0,
-        timeend: 0,
+        _id: "",
+        name: "",
+        address: "",
+        price: "",
+        time_start: "",
+        time_end: "",
+        total_slot: 0,
+        free_slot: 0,
+        sectors: [],
     });
 
     const MarkerAnimOut = () => {
@@ -79,10 +72,6 @@ const HomePage = ({ navigation }) => {
     const formatPrice = (res) => {
         return res + " VND";
     };
-
-    useEffect(() => {
-        MarkerAnimOut();
-    }, []);
 
     const getLocation = async () => {
         try {
@@ -101,6 +90,60 @@ const HomePage = ({ navigation }) => {
         }
     };
 
+    const [makers, setMakers] = React.useState([]);
+
+    const getMakers = async () => {
+        try {
+            const result = await axios.get(
+                `${server}/parkings/${pin.longitude}+${pin.latitude}/10`
+            );
+            setMakers(result.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const [profile, setProfile] = useState(
+        {
+            user: {
+                _id: "",
+                email: "",
+                email: "",
+                history: [],
+                type_account: "free",
+            }
+        }
+    )
+
+    const getProfile = async () => {
+        try {
+            const userInfo = await getItem("user");
+            const result = await axios.get(
+                `${server}/users/${userInfo.user._id}`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                }
+            )
+            setProfile(result.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        getMakers();
+        getProfile();
+        MarkerAnimOut();
+    }, []);
+
+    const logout = async () => {
+        await deleteItem("user");
+        navigation.navigate("SignIn");
+        setNavtabVisible(!navtabVisible);
+    };
+
     return (
         <View
             style={{
@@ -114,13 +157,11 @@ const HomePage = ({ navigation }) => {
                     position: "absolute",
                     width: "100%",
                     top: 0,
-                    height: 100,
+                    height: 70,
                     backgroundColor: Themes.color.primary + "aa",
-                    borderBottomLeftRadius: 50,
-                    borderBottomRightRadius: 50,
                     opacity: 1,
                     paddingHorizontal: 20,
-                    paddingVertical: 10,
+                    paddingVertical: 20,
                     alignItems: "center",
                     elevation: 1000,
                 }}
@@ -169,7 +210,7 @@ const HomePage = ({ navigation }) => {
                                 setSearchVisible(!searchVisible);
                             }}
                             icon="search"
-                            size={30}
+                            size={25}
                         />
                     </View>
                 </View>
@@ -182,6 +223,9 @@ const HomePage = ({ navigation }) => {
                                 width: "100%",
                                 height: 60,
                                 backgroundColor: "#fff",
+                                position: "absolute",
+                                top: 5,
+                                elevation: 100,
                             },
                         ]}
                     >
@@ -234,7 +278,7 @@ const HomePage = ({ navigation }) => {
                 style={{
                     height: "100%",
                     width: "100%",
-                    marginTop: 90,
+                    marginTop: 70,
                 }}
             >
                 <MapView
@@ -255,9 +299,7 @@ const HomePage = ({ navigation }) => {
                         <Marker
                             coordinate={pin}
                             draggable={true}
-                            onDragStart={(e) => {
-                                console.log("Drag start: ", pin);
-                            }}
+                            onDragStart={(e) => {}}
                             onDragEnd={(e) => {
                                 setPin({
                                     latitude: e.nativeEvent.coordinate.latitude,
@@ -294,9 +336,15 @@ const HomePage = ({ navigation }) => {
                     )}
 
                     {/* List marker */}
-                    {Makers.map((maker, index) => {
+                    {makers.map((maker, index) => {
                         return (
-                            <Marker key={index} coordinate={maker.coordinate}>
+                            <Marker
+                                key={index}
+                                coordinate={{
+                                    latitude: maker.location.coordinates[1],
+                                    longitude: maker.location.coordinates[0],
+                                }}
+                            >
                                 <View
                                     style={{
                                         height: 30,
@@ -308,7 +356,7 @@ const HomePage = ({ navigation }) => {
                                     <Button
                                         title="P"
                                         style={
-                                            indexParkSelect === maker.id
+                                            indexParkSelect === maker._id
                                                 ? Themes.buttonMarksSelect
                                                 : Themes.buttonMarks
                                         }
@@ -351,12 +399,6 @@ const HomePage = ({ navigation }) => {
                             </Marker>
                         );
                     })}
-
-                    {/* <MapViewDirections
-                        origin={pin}
-                        destination={Makers[0].coordinate}
-                        apikey={API_KEY}
-                    /> */}
                 </MapView>
             </View>
 
@@ -384,9 +426,6 @@ const HomePage = ({ navigation }) => {
                             alignItems: "center",
                             elevation: 100,
                             paddingHorizontal: 10,
-                            // backgroundColor: Themes.color.primary,
-                            // borderWidth: 2,
-                            // borderColor: Themes.color.info,
                         }}
                     >
                         <View
@@ -440,7 +479,6 @@ const HomePage = ({ navigation }) => {
                                 paddingVertical: 10,
                                 flexDirection: "row",
                                 flexWrap: "wrap",
-                                // backgroundColor: "red",
                                 borderRadius: 50,
                                 borderWidth: 1,
                                 borderColor: Themes.color.info,
@@ -462,7 +500,7 @@ const HomePage = ({ navigation }) => {
                                     fontWeight: "bold",
                                 }}
                             >
-                                {dataModal.use} / {dataModal.total}
+                                {dataModal.free_slot} / {dataModal.total_slot}
                             </Text>
                         </View>
 
@@ -473,7 +511,6 @@ const HomePage = ({ navigation }) => {
                                 paddingVertical: 10,
                                 flexDirection: "row",
                                 flexWrap: "wrap",
-                                // backgroundColor: "red",
                                 borderRadius: 50,
                                 borderWidth: 1,
                                 borderColor: Themes.color.info,
@@ -506,12 +543,10 @@ const HomePage = ({ navigation }) => {
                                 paddingVertical: 10,
                                 flexDirection: "row",
                                 flexWrap: "wrap",
-                                // backgroundColor: "red",
                                 borderRadius: 50,
                                 borderWidth: 1,
                                 borderColor: Themes.color.info,
                                 marginTop: 10,
-                                // marginBottom: 30,
                             }}
                         >
                             <Text
@@ -525,11 +560,11 @@ const HomePage = ({ navigation }) => {
                             <Text
                                 style={{
                                     color: Themes.color.info,
-                                    width: 100,
+                                    width: 160,
                                     fontWeight: "bold",
                                 }}
                             >
-                                {dataModal.timestart}H - {dataModal.timeend}H
+                                {dataModal.time_start} - {dataModal.time_end}
                             </Text>
                         </View>
 
@@ -543,7 +578,7 @@ const HomePage = ({ navigation }) => {
                         >
                             <Button
                                 title={
-                                    indexParkSelect === dataModal.id
+                                    indexParkSelect === dataModal._id
                                         ? "Unselect"
                                         : "Select"
                                 }
@@ -555,7 +590,7 @@ const HomePage = ({ navigation }) => {
                                         height: 40,
                                         borderRadius: 25,
                                         backgroundColor:
-                                            indexParkSelect === dataModal.id
+                                            indexParkSelect === dataModal._id
                                                 ? Themes.color.danger
                                                 : Themes.color.success,
                                         marginVertical: 10,
@@ -564,15 +599,15 @@ const HomePage = ({ navigation }) => {
                                     Text: Themes.buttonSuccess.Text,
                                 }}
                                 onPress={() => {
-                                    if (indexParkSelect === dataModal.id) {
-                                        setIndexParkSelect(0);
+                                    if (indexParkSelect === dataModal._id) {
+                                        setIndexParkSelect("");
                                     } else {
-                                        setIndexParkSelect(dataModal.id);
+                                        setIndexParkSelect(dataModal._id);
                                     }
                                 }}
                             />
 
-                            {indexParkSelect === dataModal.id ? (
+                            {indexParkSelect === dataModal._id ? (
                                 <Button
                                     title="View Detail"
                                     style={{
@@ -604,7 +639,7 @@ const HomePage = ({ navigation }) => {
                     height: 40,
                     width: 40,
                     position: "absolute",
-                    bottom: 150,
+                    bottom: 70,
                     right: 15,
                     backgroundColor: Themes.color.light,
                     alignItems: "center",
@@ -641,13 +676,13 @@ const HomePage = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            {indexParkSelect === dataModal.id && modalVisible === false ? (
+            {indexParkSelect === dataModal._id && modalVisible === false ? (
                 <View
                     style={{
                         height: 50,
                         width: 120,
                         position: "absolute",
-                        top: 150,
+                        top: 90,
                         right: 15,
                     }}
                 >
@@ -685,8 +720,8 @@ const HomePage = ({ navigation }) => {
                             Text: Themes.buttonSuccess.Text,
                         }}
                         onPress={() => {
-                            if (indexParkSelect === dataModal.id) {
-                                setIndexParkSelect(0);
+                            if (indexParkSelect === dataModal._id) {
+                                setIndexParkSelect("");
                             }
                         }}
                     />
@@ -776,9 +811,14 @@ const HomePage = ({ navigation }) => {
                                         fontSize: 16,
                                     }}
                                 >
-                                    Marvis Ighedosa
+                                    {
+                                        profile.user.email
+                                    }
                                 </Text>
-                                <Text>marvisighedosa@gmail.com</Text>
+                                <Text style={{
+                                    textTransform: 'capitalize',
+                                    color: Themes.color.success
+                                }}>{profile.user.type_account} account</Text>
                             </View>
                         </View>
                         <View
@@ -990,8 +1030,7 @@ const HomePage = ({ navigation }) => {
                                     Text: Themes.button.Text,
                                 }}
                                 onPress={() => {
-                                    navigation.navigate("SignIn");
-                                    setNavtabVisible(!navtabVisible);
+                                    logout();
                                 }}
                             />
                         </View>

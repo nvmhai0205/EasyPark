@@ -1,0 +1,419 @@
+{
+	"info": {
+		"_postman_id": "a88b4dca-8d41-44e4-8c6b-03033f693a26",
+		"name": "EasyPark",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20856399"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"hieu8602@gmail.com\",\n    \"password\": \"DatProHCMUT\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/login",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjc4ZGJmZTY1ZWFjNjk3ZDYwZmJlMjIiLCJpYXQiOjE2NTMzNzA5NDl9.4Q-l6-TxKvQRpv27hMhzm1_mMWbohhIcj30b39B4oT4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/6278dbfe65eac697d60fbe22",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"6278dbfe65eac697d60fbe22"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get history",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjc4ZGJmZTY1ZWFjNjk3ZDYwZmJlMjIiLCJpYXQiOjE2NTMzNzA5NDl9.4Q-l6-TxKvQRpv27hMhzm1_mMWbohhIcj30b39B4oT4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/6278dbfe65eac697d60fbe22/history",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"6278dbfe65eac697d60fbe22",
+						"history"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logoutall",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjc4ZGJmZTY1ZWFjNjk3ZDYwZmJlMjIiLCJpYXQiOjE2NTMyOTY5OTN9.uxCcdF1DzecfilXdYRrj5YScsz7my5obKBAeB7IXGNs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/6278dbfe65eac697d60fbe22/logoutall",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"6278dbfe65eac697d60fbe22",
+						"logoutall"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"dat@gmail.com\",\n    \"password\": \"1234567\",\n    \"repeat_password\": \"1234567\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find parking",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/parkings/106.808+10.881/5",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"parkings",
+						"106.808+10.881",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save history",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjc4ZGJmZTY1ZWFjNjk3ZDYwZmJlMjIiLCJpYXQiOjE2NTMzNzE5MTd9.B6iA5CEkv6sTdS0lwrstopa1pS6ulQu8ghFn0EYXhl4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"parking_id\": \"6289b71b5b88d0314a7e7f6e\",\n    \"sector_id\": \"6289b71b5b88d0314a7e7f6f\",\n    \"position_id\": \"6289b71b5b88d0314a7e7f82\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/6278dbfe65eac697d60fbe22/history",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"6278dbfe65eac697d60fbe22",
+						"history"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete history",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjc4ZGJmZTY1ZWFjNjk3ZDYwZmJlMjIiLCJpYXQiOjE2NTIyMTE0MjJ9.dtNIP65cprBXYz-i_LYLUmcaz3229ZYwsMFYryL8HSI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"history_id\": \"6289ae148d7258fc3a7e2a29\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/6278dbfe65eac697d60fbe22/history",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"6278dbfe65eac697d60fbe22",
+						"history"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request reset password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"hieu8602@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/reset-password",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"hieu8602@gmail.com\",\n    \"token\": 6774\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/verify",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"hieu8602@gmail.com\",\n    \"token\": 6774,\n    \"password\": \"DatProHCMUT\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/reset-password",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjc4ZGJmZTY1ZWFjNjk3ZDYwZmJlMjIiLCJpYXQiOjE2NTMzNzI1MTh9.rSJBLtzisxGtJ6-M-60HVEL7luBs1RlMYWsHPZ6KQ8U",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"old_password\": \"DatPro1234\",\n    \"new_password\": \"DatProHCMUT\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/6278dbfe65eac697d60fbe22/update-password",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"6278dbfe65eac697d60fbe22",
+						"update-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login with Google",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://easypark212.herokuapp.com/users/login/google",
+					"protocol": "https",
+					"host": [
+						"easypark212",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"login",
+						"google"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

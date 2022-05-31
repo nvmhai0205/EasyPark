@@ -1,0 +1,1 @@
+export default "https://easypark212.herokuapp.com";

@@ -7,6 +7,8 @@ import Button from "../../components/Button.component";
 import server from "./../../link";
 import axios from "axios";
 
+import Loadding from "../../components/Loadding.component";
+
 const RegisterPage = ({ navigation }) => {
     const [isSelected, setSelection] = useState(false);
     const changeSelected = () => {
@@ -23,6 +25,8 @@ const RegisterPage = ({ navigation }) => {
         setUserInput({ ...userInput, [name]: e.nativeEvent.text });
     };
 
+    const [load, setLoad] = React.useState(false);
+
     const handleRegister = () => {
         if (!isSelected) {
             Alert.alert("Bạn chưa đồng ý điều khoản");
@@ -35,20 +39,28 @@ const RegisterPage = ({ navigation }) => {
 
     const Register = async () => {
         try {
+            setLoad(true);
             const data = {
                 "email": userInput.email,
                 "password": userInput.password,
                 "repeat_password": userInput.confirmPass,
             };
             const result = await axios.post(`${server}/users`, data);
-            Alert.alert("Đăng ký thành công");
+            setLoad(false);
+            Alert.alert("Successful account registration");
         } catch (error) {
-            Alert.alert("Đăng ký không thành công");
+            setLoad(false);
+            Alert.alert("Account registration failed");
         }
     };
 
     return (
         <View style={Themes.container}>
+
+            {
+                load ? <Loadding/> : <></>
+            }
+
             <Text style={Themes.headding}>Create Account</Text>
 
             <Text style={Themes.label}>Email</Text>

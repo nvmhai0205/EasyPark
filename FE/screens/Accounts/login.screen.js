@@ -9,12 +9,15 @@ import axios from "axios";
 import server from "./../../link";
 
 import { storeItem, getItem } from "./../../store/index";
+import Loadding from "../../components/Loadding.component";
 
 const LoginPage = ({ navigation }) => {
     const [userInput, setUserInput] = React.useState({
         "email": "",
         "password": "",
     });
+
+    const [load, setLoad] = React.useState(false);
 
     const handleChange = (e, name) => {
         setUserInput({ ...userInput, [name]: e.nativeEvent.text });
@@ -30,16 +33,20 @@ const LoginPage = ({ navigation }) => {
 
     const handleLogin = async (e) => {
         try {
+            setLoad(true);
+
             const result = await axios.post(`${server}/users/login`, userInput);
             if (result.data) {
-                Alert.alert("Đăng nhập thành công");
+                setLoad(false);
                 navigation.navigate("Home");
                 storeItem("user", result.data);
+                Alert.alert("Logged in successfully");
             } else {
-                Alert.alert("Sai tài khoản hoặc mật khẩu");
+                Alert.alert("Incorrect account or password");
             }
         } catch (error) {
-            Alert.alert("Sai tài khoản hoặc mật khẩu");
+            setLoad(false);
+            Alert.alert("Incorrect account or password");
         }
     };
 
@@ -49,6 +56,11 @@ const LoginPage = ({ navigation }) => {
 
     return (
         <View style={Themes.container}>
+
+            {
+                load ? <Loadding/> : <></>
+            }
+
             <Image source={Login} style={{ width: 350, height: 250 }} />
             <Text style={Themes.headding}>Sign In</Text>
 

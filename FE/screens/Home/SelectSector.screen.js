@@ -10,10 +10,11 @@ import React, { useState, useRef, useEffect } from "react";
 import Themes from "../../config/theme";
 import Button from "../../components/Button.component";
 
-import Sectors from "./../../config/Sectors";
 import SectorItem from "../../components/SectorItem.component";
 
-const SelectSector = () => {
+import { getItem } from "./../../store/index";
+
+const SelectSector = ({ navigation }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef = useRef(null);
@@ -21,6 +22,35 @@ const SelectSector = () => {
     const viewableItemChanged = useRef(({ viewableItems }) => {
         setCurrentIndex(viewableItems[0].index);
     }).current;
+
+    const [parking, setParking] = React.useState({
+        location: {
+            type: "Point",
+            coordinates: [],
+        },
+        _id: "",
+        name: "",
+        address: "",
+        price: "",
+        time_start: "",
+        time_end: "",
+        total_slot: 0,
+        free_slot: 0,
+        sectors: [],
+    })
+
+    const getParkingInfo = async () => {
+        try {
+            const value = await getItem("parkingSelect")
+            setParking(value);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getParkingInfo();
+    },[]);
 
     const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
     return (
@@ -30,43 +60,52 @@ const SelectSector = () => {
                     position: "absolute",
                     width: "100%",
                     top: 0,
-                    height: 140,
-                    // backgroundColor: Themes.color.transparent,
+                    height: 70,
+                    backgroundColor: Themes.color.primary + "aa",
+                    opacity: 1,
                     paddingHorizontal: 20,
-                    paddingVertical: 0,
+                    paddingVertical: 20,
                     alignItems: "center",
                     elevation: 1000,
-                    borderBottomColor: Themes.color.primary,
-                    borderBottomWidth: 1,
-                    borderBottomLeftRadius: 50,
-                    borderBottomRightRadius: 50,
-                    backgroundColor: Themes.color.primary + "aa",
                 }}
             >
                 <View
                     style={{
                         width: "100%",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
                     }}
                 >
-                    <Button
-                        title="Back"
+                    <View style={{ width: "20%" }}>
+                        <Button
+                            title=""
+                            style={[Themes.buttonTransparent, { height: 30 }]}
+                            onPress={() => {
+                                navigation.navigate("Home");
+                            }}
+                            icon="chevron-circle-left"
+                            size={30}
+                        />
+                    </View>
+                    <View
                         style={{
-                            TouchableOpacity: {
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: 60,
-                                height: 40,
-                                borderRadius: 25,
-                                backgroundColor: Themes.color.primary,
-                                marginVertical: 10,
-                            },
-                            Text: {
-                                color: Themes.color.light,
-                            },
+                            width: "60%",
+                            height: 50,
                         }}
-                        onPress={() => {}}
-                        size={30}
-                    />
+                    >
+                        <Text
+                            style={{
+                                color: Themes.color.light,
+                                fontSize: 20,
+                                fontWeight: "bold",
+                                textAlign: "center",
+                            }}
+                        >
+                            Parking Detail
+                        </Text>
+                    </View>
+                    <View style={{ width: "20%" }}></View>
                 </View>
 
                 <View
@@ -88,7 +127,9 @@ const SelectSector = () => {
                             fontWeight: "bold",
                         }}
                     >
-                        The Student's Cultural House
+                        {
+                            parking.name
+                        }
                     </Text>
                 </View>
             </View>
@@ -111,12 +152,12 @@ const SelectSector = () => {
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
                     >
-                        {Sectors.map((item, idx) => {
+                        {parking.sectors.map((sector, idx) => {
                             if (idx !== currentIndex) {
                                 return (
                                     <Button
                                         key={idx}
-                                        title={item.name}
+                                        title={sector.name}
                                         style={Themes.buttonOutlineGray}
                                         onPress={() => {
                                             if (slidesRef.current) {
@@ -136,7 +177,7 @@ const SelectSector = () => {
                                 return (
                                     <Button
                                         key={idx}
-                                        title={item.name}
+                                        title={sector.name}
                                         style={Themes.buttonSuccess}
                                         onPress={() => {
                                             if (slidesRef.current) {
@@ -156,14 +197,14 @@ const SelectSector = () => {
                     </ScrollView>
                 </View>
                 <FlatList
-                    data={Sectors}
+                    data={parking.sectors}
                     renderItem={({ item }) => <SectorItem item={item} />}
                     horizontal
                     showsHorizontalScrollIndicator
                     pagingEnabled
                     removeClippedSubviews={true}
                     bounces={false}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.name}
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { x: scrollX } } }],
                         {

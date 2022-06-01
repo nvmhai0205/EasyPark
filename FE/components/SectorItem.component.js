@@ -12,14 +12,102 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Button from "./Button.component";
 import AIcon from "react-native-vector-icons/AntDesign";
 
+import axios from "axios";
+import server from "./../link";
+
+import { getItem } from "./../store/index";
+
+import { useDispatch } from "react-redux";
+import { initHistory } from "../redux/history";
+
 const SectorItem = (props) => {
-    const { item } = props;
+    const { parkingid, item } = props;
+
+    const dispatch = useDispatch();
 
     const [positionInfo, setPositionInfo] = React.useState({
         sector: "",
         row: "",
         position: "",
+        pos_id: "",
     });
+
+    const [data, setData] = React.useState([]);
+
+    const modifySector = (sector) => {
+        let name = "";
+        const res = [];
+
+        item.positions.forEach((pos, index) => {
+            if (pos.row != name) {
+                name = pos.row;
+                const row = {
+                    name: pos.row,
+                    positions: [],
+                };
+                row.positions.push({
+                    _id: pos._id,
+                    name: pos.pos,
+                    status: pos.status,
+                });
+                res.push(row);
+            } else {
+                res[res.length - 1].positions.push({
+                    _id: pos._id,
+                    name: pos.pos,
+                    status: pos.status,
+                });
+            }
+        });
+        setData(res);
+    };
+
+    const [parkid, setParkId] = React.useState("");
+
+    const getParkId = async () => {
+        try {
+            const value = await getItem("parkingSelect");
+            setParkId(value._id);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const saveParking = async () => {
+        try {
+            const userInfo = await getItem("user");
+            const result = await axios.post(
+                `${server}/users/${userInfo.user._id}/history`,
+                {
+                    'parking_id': parkid,
+                    "sector_id": item._id,
+                    "position_id": positionInfo.pos_id,
+                },
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                },
+            );
+            
+            const history = await axios.get(
+                `${server}/users/${userInfo.user._id}/history`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                }
+            );
+            dispatch(initHistory(history.data));
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    React.useEffect(() => {
+        getParkId();
+        modifySector();
+    }, []);
 
     const [modalVisible, setModalVisible] = React.useState(false);
 
@@ -45,11 +133,11 @@ const SectorItem = (props) => {
                 }}
                 showsVerticalScrollIndicator={false}
             >
-                {item.rows.map((row, index) => {
+                {data.map((row, index) => {
                     return (
                         <View
                             style={{
-                                height: 480 / 6,
+                                height: 480 / 5,
                                 width: "100%",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -70,7 +158,7 @@ const SectorItem = (props) => {
                                 }}
                             >
                                 {row.positions.map((pos, i) => {
-                                    if (pos.status === false) {
+                                    if (pos.status === 1) {
                                         return (
                                             <View
                                                 key={i}
@@ -122,6 +210,7 @@ const SectorItem = (props) => {
                                                             sector: item.name,
                                                             row: row.name,
                                                             position: pos.name,
+                                                            pos_id: pos._id,
                                                         });
                                                         setModalVisible(
                                                             !modalVisible
@@ -228,7 +317,7 @@ const SectorItem = (props) => {
                         <View
                             style={{
                                 height: 50,
-                                width: "85%",
+                                width: "90%",
                                 borderColor: Themes.color.info,
                                 borderWidth: 1,
                                 borderRadius: 10,
@@ -244,7 +333,8 @@ const SectorItem = (props) => {
                                     fontWeight: "bold",
                                 }}
                             >
-                                {positionInfo.sector} - {positionInfo.row} -{" "}
+                                Sector {positionInfo.sector} - Row{" "}
+                                {positionInfo.row} - Position{" "}
                                 {positionInfo.position}
                             </Text>
                         </View>
@@ -258,7 +348,8 @@ const SectorItem = (props) => {
                                 title="Save"
                                 style={Themes.buttonSuccess}
                                 onPress={() => {
-                                    setSuccessVisible(!successVisible);
+                                    saveParking();
+                                    // setSuccessVisible(!successVisible);
                                     setModalVisible(!modalVisible);
                                 }}
                             />

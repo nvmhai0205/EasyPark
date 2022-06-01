@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, Animated } from "react-native";
+import { View, Image, StyleSheet, Animated, useWindowDimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import logo from "./../assets/images/logo.png";
 import car from "./../assets/images/car.png";
@@ -39,10 +39,11 @@ const style = StyleSheet.create({
         height: "100%",
         width: "100%",
         position: "absolute",
-        zIndex: 1000,
+        zIndex: 3000,
         backgroundColor: "white",
         alignItems: "center",
         justifyContent: "center",
+        elevation: 1000,
     },
     image: {
         width: 200,

@@ -335,6 +335,9 @@ const Setting = ({ navigation }) => {
                                         alignItems: "center",
                                         paddingHorizontal: 20,
                                     }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {screen: "account"});
+                                    }}
                                 >
                                     <View
                                         style={{
@@ -365,6 +368,9 @@ const Setting = ({ navigation }) => {
                                         flexDirection: "row",
                                         alignItems: "center",
                                         paddingHorizontal: 20,
+                                    }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {screen: "terms"});
                                     }}
                                 >
                                     <View
@@ -397,6 +403,10 @@ const Setting = ({ navigation }) => {
                                         alignItems: "center",
                                         paddingHorizontal: 20,
                                     }}
+
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {screen: "policy"});
+                                    }}
                                 >
                                     <View
                                         style={{
@@ -428,6 +438,9 @@ const Setting = ({ navigation }) => {
                                         alignItems: "center",
                                         paddingHorizontal: 20,
                                     }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {screen: "premium"});
+                                    }}
                                 >
                                     <View
                                         style={{
@@ -458,6 +471,9 @@ const Setting = ({ navigation }) => {
                                         flexDirection: "row",
                                         alignItems: "center",
                                         paddingHorizontal: 20,
+                                    }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {screen: "index"});
                                     }}
                                 >
                                     <View

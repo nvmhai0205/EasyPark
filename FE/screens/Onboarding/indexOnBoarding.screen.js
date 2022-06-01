@@ -7,14 +7,30 @@ import Logo from "./../../assets/images/logo.png";
 import Banner from "./../../assets/images/onboard1.png";
 import Button from "./../../components/Button.component";
 
+import { storeItem, getItem, deleteItem } from "./../../store/index";
+
 const IndexOnBoarding = ({ navigation }) => {
     const [load, setLoad] = useState(true);
 
-    useEffect(() => {
-        setTimeout(() => {
-            setLoad(false);
-        }, 4000);
-    });
+    const [pageOnboard, setPageOnboard] = React.useState(true);
+
+    useEffect(async () => {
+        
+        const value = await getItem("onboard");
+
+        if (value === null) {
+            storeItem("onboard", {onboard: true})
+            setTimeout(() => {
+                setLoad(false);
+            }, 4000);
+        }
+        else {
+            setTimeout(() => {
+                setLoad(false);
+                navigation.navigate("SignIn");
+            }, 4000);
+        }
+    }, []);
 
     return (
         <View style={[Themes.container, {backgroundColor: "#fff"}]}>

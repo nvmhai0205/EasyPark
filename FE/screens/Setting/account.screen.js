@@ -5,7 +5,7 @@ import {
     Image,
     StyleSheet,
     Modal,
-    ScrollView
+    ScrollView,
 } from "react-native";
 import React from "react";
 import Themes from "../../config/theme";
@@ -18,7 +18,42 @@ import F5Icon from "react-native-vector-icons/FontAwesome5";
 import IconM from "react-native-vector-icons/MaterialIcons";
 import Poster from "./../../assets/images/poster.jpg";
 
+import axios from "axios";
+import server from "./../../link";
+import { getItem, deleteItem } from "./../../store/index";
+
 const AccountScreen = ({ navigation }) => {
+    const [profile, setProfile] = React.useState({
+        user: {
+            _id: "",
+            email: "",
+            email: "",
+            history: [],
+            type_account: "free",
+        },
+    });
+
+    const getProfile = async () => {
+        try {
+            const userInfo = await getItem("user");
+            const result = await axios.get(
+                `${server}/users/${userInfo.user._id}`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                }
+            );
+            setProfile(result.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    React.useEffect(() => {
+        getProfile();
+    }, []);
+
     return (
         <View style={[Themes.container, { backgroundColor: "#eee" }]}>
             <View
@@ -151,10 +186,194 @@ const AccountScreen = ({ navigation }) => {
                             fontWeight: "bold",
                         }}
                     >
-                        Nguyen Van Minh Hai
+                        {profile.user.email}
                     </Text>
-                    <View>
-                        
+                    <View
+                        style={{
+                            width: "100%",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Text
+                            style={{
+                                textTransform: "capitalize",
+                                color: Themes.color.light,
+                                backgroundColor: Themes.color.success,
+                                fontSize: 16,
+                                width: 120,
+                                textAlign: "center",
+                                borderRadius: 13,
+                                height: 25,
+                                marginTop: 10,
+                            }}
+                        >
+                            {profile.user.type_account} Account
+                        </Text>
+                    </View>
+
+                    <View
+                        style={{
+                            width: "100%",
+                            alignItems: "center",
+                        }}
+                    >
+                        <View
+                            style={{
+                                width: 350,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                marginTop: 30,
+                            }}
+                        >
+                            <View style={styles.tabItem}>
+                                <TouchableOpacity
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        paddingHorizontal: 20,
+                                    }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "terms",
+                                        });
+                                        
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            width: 30,
+                                        }}
+                                    >
+                                        <MIcon
+                                            name="help-rhombus"
+                                            size={25}
+                                            color={Themes.color.info}
+                                        />
+                                    </View>
+                                    <Text
+                                        style={{
+                                            color: Themes.color.info,
+                                            marginLeft: 10,
+                                        }}
+                                    >
+                                        Help
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.tabItem}>
+                                <TouchableOpacity
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        paddingHorizontal: 20,
+                                    }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "policy",
+                                        });
+                                        
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            width: 30,
+                                        }}
+                                    >
+                                        <IconM
+                                            name="local-police"
+                                            size={25}
+                                            color={Themes.color.info}
+                                        />
+                                    </View>
+                                    <Text
+                                        style={{
+                                            color: Themes.color.info,
+                                            marginLeft: 10,
+                                        }}
+                                    >
+                                        Privacy policy
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.tabItem}>
+                                <TouchableOpacity
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        paddingHorizontal: 20,
+                                    }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "premium",
+                                        });
+                                        
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            width: 30,
+                                        }}
+                                    >
+                                        <F5Icon
+                                            name="medal"
+                                            size={25}
+                                            color={Themes.color.info}
+                                        />
+                                    </View>
+                                    <Text
+                                        style={{
+                                            color: Themes.color.info,
+                                            marginLeft: 10,
+                                        }}
+                                    >
+                                        Premium
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.tabItem}>
+                                <TouchableOpacity
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        paddingHorizontal: 20,
+                                    }}
+                                    onPress={() => {
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "index",
+                                        });
+                                        
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            width: 30,
+                                        }}
+                                    >
+                                        <IconM
+                                            name="settings"
+                                            size={30}
+                                            color={Themes.color.info}
+                                        />
+                                    </View>
+                                    <Text
+                                        style={{
+                                            color: Themes.color.info,
+                                            marginLeft: 10,
+                                        }}
+                                    >
+                                        Setting
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
                 </View>
             </ScrollView>
@@ -162,6 +381,15 @@ const AccountScreen = ({ navigation }) => {
     );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    tabItem: {
+        height: 50,
+        width: 300,
+        borderColor: Themes.color.info,
+        borderWidth: 1,
+        marginVertical: 5,
+        borderRadius: 10,
+    },
+});
 
 export default AccountScreen;

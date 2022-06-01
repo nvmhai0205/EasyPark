@@ -21,10 +21,9 @@ import IconM from "react-native-vector-icons/MaterialIcons";
 import * as Location from "expo-location";
 import MapViewDirections from "react-native-maps-directions";
 
-import { getItem, deleteItem } from "./../../store/index";
+import { getItem, deleteItem, storeItem } from "./../../store/index";
 import axios from "axios";
 import server from "./../../link";
-import { Makers } from "../../config/Makers";
 
 const HomePage = ({ navigation }) => {
     const MarkerAnim = useRef(new Animated.Value(0)).current;
@@ -601,8 +600,10 @@ const HomePage = ({ navigation }) => {
                                 onPress={() => {
                                     if (indexParkSelect === dataModal._id) {
                                         setIndexParkSelect("");
+                                        deleteItem("parkingSelect");
                                     } else {
                                         setIndexParkSelect(dataModal._id);
+                                        storeItem("parkingSelect", dataModal);
                                     }
                                 }}
                             />
@@ -624,7 +625,9 @@ const HomePage = ({ navigation }) => {
                                         },
                                         Text: Themes.buttonSuccess.Text,
                                     }}
-                                    onPress={() => {}}
+                                    onPress={() => {
+                                        navigation.navigate("SelectSector")
+                                    }}
                                 />
                             ) : (
                                 <></>
@@ -701,7 +704,9 @@ const HomePage = ({ navigation }) => {
                             },
                             Text: Themes.buttonSuccess.Text,
                         }}
-                        onPress={() => {}}
+                        onPress={() => {
+                            navigation.navigate("SelectSector")
+                        }}
                     />
 
                     <Button
@@ -722,6 +727,7 @@ const HomePage = ({ navigation }) => {
                         onPress={() => {
                             if (indexParkSelect === dataModal._id) {
                                 setIndexParkSelect("");
+                                deleteItem("parkingSelect");
                             }
                         }}
                     />
@@ -839,7 +845,7 @@ const HomePage = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("account");
+                                        navigation.navigate("SettingScreen", {screen: "account"});
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -874,7 +880,7 @@ const HomePage = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("terms");
+                                        navigation.navigate("SettingScreen", {screen: "terms"});
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -909,7 +915,7 @@ const HomePage = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("policy");
+                                        navigation.navigate("SettingScreen", {screen: "policy"});
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -944,7 +950,7 @@ const HomePage = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("premium");
+                                        navigation.navigate("SettingScreen", {screen: "premium"});
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -979,7 +985,7 @@ const HomePage = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("index");
+                                        navigation.navigate("SettingScreen", {screen: "index"});
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >

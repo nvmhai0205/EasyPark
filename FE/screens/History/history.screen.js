@@ -20,25 +20,33 @@ import axios from "axios";
 import server from "./../../link";
 import { getItem, deleteItem } from "./../../store/index";
 
+import Loadding from "../../components/Loadding.component";
+
+import { useDispatch, useSelector } from "react-redux";
+import { initHistory } from "../../redux/history";
+import { removeHistory } from "../../redux/history";
+
 const History = ({ navigation }) => {
     const [modalVisible, setModalVisible] = React.useState(false);
     const [dataModal, setDataModal] = React.useState({
-        id: 0,
-        name: "",
-        sector: "",
+        _id: "",
+        parking: "",
+        pos: "",
         row: "",
-        position: "",
+        sector: "",
         time: "",
-        price: 0,
     });
 
-    const [historiList, setHistoriList] = React.useState([]);
+    const dispatch = useDispatch();
+    const history = useSelector((state) => state.History.history);
 
     const [navtabVisible, setNavtabVisible] = React.useState(false);
 
     const formatPrice = (res) => {
         return res + " VND";
     };
+
+    const [load, setLoad] = React.useState(false);
 
     const getHistory = async () => {
         try {
@@ -51,24 +59,43 @@ const History = ({ navigation }) => {
                     },
                 }
             );
-
-            setHistoriList(result.data);
+            dispatch(initHistory(result.data));
         } catch (error) {
             console.log(error);
         }
     };
 
-    const [profile, setProfile] = useState(
-        {
-            user: {
-                _id: "",
-                email: "",
-                email: "",
-                history: [],
-                type_account: "free",
-            }
+    const [IdDelete, setIdDelete] = React.useState("");
+
+    const deleteHistory = async () => {
+        try {
+            setLoad(true);
+            const userInfo = await getItem("user");
+            const result = await axios.delete(
+                `${server}/users/${userInfo.user._id}/history/${IdDelete}`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                }
+            );
+            dispatch(removeHistory(IdDelete));
+            setLoad(false);
+        } catch (error) {
+            console.log(error);
+            setLoad(false);
         }
-    )
+    };
+
+    const [profile, setProfile] = useState({
+        user: {
+            _id: "",
+            email: "",
+            email: "",
+            history: [],
+            type_account: "free",
+        },
+    });
 
     const logout = async () => {
         await deleteItem("user");
@@ -86,7 +113,7 @@ const History = ({ navigation }) => {
                         Authorization: "Bearer " + userInfo.token,
                     },
                 }
-            )
+            );
             setProfile(result.data);
         } catch (error) {
             console.log(error);
@@ -100,6 +127,7 @@ const History = ({ navigation }) => {
 
     return (
         <View style={[Themes.container, { backgroundColor: "#eee" }]}>
+            {load ? <Loadding /> : <></>}
             <View
                 style={{
                     position: "absolute",
@@ -168,90 +196,115 @@ const History = ({ navigation }) => {
                         height: 600,
                         width: 400,
                         paddingHorizontal: 15,
+                        alignItems: "center",
+                        // justifyContent: "center",
                     }}
                 >
-                    <ScrollView
-                        style={{
-                            height: 450,
-                            width: "100%",
-                            borderRadius: 10,
-                        }}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        {historiList.map((item, idx) => {
-                            return (
-                                <View
-                                    key={idx}
-                                    style={{
-                                        height: 105,
-                                        width: "100%",
-                                        marginBottom: 15,
-                                        borderRadius: 10,
-                                        borderColor: "#ccc",
-                                        borderWidth: 1,
-                                        padding: 10,
-                                    }}
-                                >
-                                    <TouchableOpacity
+                    {history.length > 0 ? (
+                        <ScrollView
+                            style={{
+                                height: 450,
+                                width: "100%",
+                                borderRadius: 10,
+                            }}
+                            showsVerticalScrollIndicator={false}
+                        >
+                            {history.map((item, idx) => {
+                                return (
+                                    <View
+                                        key={idx}
                                         style={{
-                                            height: "100%",
+                                            height: 105,
                                             width: "100%",
-                                        }}
-                                        onPress={() => {
-                                            setModalVisible(!modalVisible);
-                                            setDataModal(item);
+                                            marginBottom: 15,
+                                            borderRadius: 10,
+                                            borderColor: "#ccc",
+                                            borderWidth: 1,
+                                            padding: 10,
                                         }}
                                     >
-                                        <Text
+                                        <TouchableOpacity
                                             style={{
-                                                color: Themes.color.primary,
-                                                fontSize: 16,
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            {item.name.length > 40
-                                                ? item.name.slice(0, 40) + "..."
-                                                : item.name}
-                                        </Text>
-
-                                        <Text
-                                            style={{
-                                                width: "90%",
-                                                color: Themes.color.dark,
-                                                fontSize: 14,
-                                                marginVertical: 5,
-                                            }}
-                                        >
-                                            {item.sector} - {item.row} -{" "}
-                                            {item.position}
-                                        </Text>
-                                        <View
-                                            style={{
+                                                height: "100%",
                                                 width: "100%",
-                                                flexDirection: "row",
+                                            }}
+                                            onPress={() => {
+                                                setModalVisible(!modalVisible);
+                                                setDataModal(item);
                                             }}
                                         >
                                             <Text
                                                 style={{
-                                                    width: "90%",
-                                                    color: Themes.color.gray,
+                                                    color: Themes.color.primary,
+                                                    fontSize: 16,
+                                                    fontWeight: "bold",
                                                 }}
                                             >
-                                                {item.time}
+                                                {item.parking.length > 40
+                                                    ? item.parking.slice(
+                                                          0,
+                                                          40
+                                                      ) + "..."
+                                                    : item.parking}
                                             </Text>
-                                            <TouchableOpacity>
-                                                <MIcon
-                                                    name="close-circle-outline"
-                                                    size={30}
-                                                    color={Themes.color.danger}
-                                                />
-                                            </TouchableOpacity>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            );
-                        })}
-                    </ScrollView>
+
+                                            <Text
+                                                style={{
+                                                    width: "90%",
+                                                    color: Themes.color.dark,
+                                                    fontSize: 14,
+                                                    marginVertical: 5,
+                                                }}
+                                            >
+                                                Sector {item.sector} - Row{" "}
+                                                {item.row} - Position {item.pos}
+                                            </Text>
+                                            <View
+                                                style={{
+                                                    width: "100%",
+                                                    flexDirection: "row",
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        width: "90%",
+                                                        color: Themes.color
+                                                            .gray,
+                                                    }}
+                                                >
+                                                    {item.time.slice(0, 10)} -{" "}
+                                                    {item.time.slice(11, 19)}
+                                                </Text>
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        setIdDelete(item._id);
+                                                        deleteHistory();
+                                                    }}
+                                                >
+                                                    <MIcon
+                                                        name="close-circle-outline"
+                                                        size={30}
+                                                        color={
+                                                            Themes.color.danger
+                                                        }
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                );
+                            })}
+                        </ScrollView>
+                    ) : (
+                        <Text style={{
+                            textTransform: "capitalize",
+                            fontSize: 20,
+                            marginTop: 200,
+                            color: Themes.color.gray
+                        }}>
+                            Parking history is empty
+                        </Text>
+                    )}
                 </View>
             </View>
 
@@ -324,7 +377,7 @@ const History = ({ navigation }) => {
                                     textAlign: "center",
                                 }}
                             >
-                                {dataModal.name}
+                                {dataModal.parking}
                             </Text>
                         </View>
 
@@ -345,8 +398,8 @@ const History = ({ navigation }) => {
                                     textAlign: "center",
                                 }}
                             >
-                                {dataModal.sector} - {dataModal.row} -{" "}
-                                {dataModal.position}
+                                Sector {dataModal.sector} - Row {dataModal.row}{" "}
+                                - Position {dataModal.position}
                             </Text>
                         </View>
 
@@ -367,7 +420,7 @@ const History = ({ navigation }) => {
                                     textAlign: "center",
                                 }}
                             >
-                                {dataModal.time}
+                                {dataModal.time.slice(0, 10)}
                             </Text>
                         </View>
 
@@ -388,7 +441,7 @@ const History = ({ navigation }) => {
                                     textAlign: "center",
                                 }}
                             >
-                                {formatPrice(dataModal.price)}
+                                {formatPrice(5000)}
                             </Text>
                         </View>
                     </View>
@@ -478,10 +531,14 @@ const History = ({ navigation }) => {
                                 >
                                     {profile.user.email}
                                 </Text>
-                                <Text style={{
-                                    textTransform: "capitalize",
-                                    color: Themes.color.success,
-                                }}>{profile.user.type_account} account</Text>
+                                <Text
+                                    style={{
+                                        textTransform: "capitalize",
+                                        color: Themes.color.success,
+                                    }}
+                                >
+                                    {profile.user.type_account} account
+                                </Text>
                             </View>
                         </View>
                         <View
@@ -502,7 +559,9 @@ const History = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("account");
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "account",
+                                        });
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -537,7 +596,9 @@ const History = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("terms");
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "terms",
+                                        });
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -572,7 +633,9 @@ const History = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("policy");
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "policy",
+                                        });
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -607,7 +670,9 @@ const History = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("premium");
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "premium",
+                                        });
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >
@@ -642,7 +707,9 @@ const History = ({ navigation }) => {
                                         paddingHorizontal: 20,
                                     }}
                                     onPress={() => {
-                                        navigation.navigate("index");
+                                        navigation.navigate("SettingScreen", {
+                                            screen: "index",
+                                        });
                                         setNavtabVisible(!navtabVisible);
                                     }}
                                 >

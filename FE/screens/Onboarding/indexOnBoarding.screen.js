@@ -16,10 +16,10 @@ const IndexOnBoarding = ({ navigation }) => {
 
     useEffect(async () => {
         
-        const value = await getItem("onboard");
+        const value = await getItem("onboard15");
 
         if (value === null) {
-            storeItem("onboard", {onboard: true})
+            storeItem("onboard15", {onboard: true})
             setTimeout(() => {
                 setLoad(false);
             }, 4000);

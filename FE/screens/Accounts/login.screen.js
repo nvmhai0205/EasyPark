@@ -33,19 +33,16 @@ const LoginPage = ({ navigation }) => {
 
     const handleLogin = async (e) => {
         try {
-            setLoad(true);
-
             const result = await axios.post(`${server}/users/login`, userInput);
             if (result.data) {
-                setLoad(false);
                 navigation.navigate("Home");
                 storeItem("user", result.data);
                 Alert.alert("Logged in successfully");
             } else {
+
                 Alert.alert("Incorrect account or password");
             }
         } catch (error) {
-            setLoad(false);
             Alert.alert("Incorrect account or password");
         }
     };

@@ -86,9 +86,9 @@ const VerifyAccount = ({navigation}) => {
             <View style={Themes.inputIcon}>
                 <TextInput
                     style={Themes.input}
-                    name="code"
+                    name="token"
                     placeholder="Enter your code"
-                    onChange={(e) => handleChange(e, "code")}
+                    onChange={(e) => handleChange(e, "token")}
                 />
                 
             </View>

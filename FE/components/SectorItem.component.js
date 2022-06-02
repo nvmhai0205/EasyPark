@@ -15,14 +15,17 @@ import AIcon from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import server from "./../link";
 
-import { getItem } from "./../store/index";
+import { getItem, storeItem } from "./../store/index";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { initHistory } from "../redux/history";
+import { initCurrent } from "../redux/current";
 
 const SectorItem = (props) => {
-    const { parkingid, item } = props;
+    const { item } = props;
 
+
+    const current = useSelector((state) => state.Current.current);
     const dispatch = useDispatch();
 
     const [positionInfo, setPositionInfo] = React.useState({
@@ -73,36 +76,53 @@ const SectorItem = (props) => {
         }
     };
 
-    const saveParking = async () => {
-        try {
-            const userInfo = await getItem("user");
-            const result = await axios.post(
-                `${server}/users/${userInfo.user._id}/history`,
-                {
-                    'parking_id': parkid,
-                    "sector_id": item._id,
-                    "position_id": positionInfo.pos_id,
-                },
-                {
-                    headers: {
-                        Authorization: "Bearer " + userInfo.token,
-                    },
-                },
-            );
-            
-            const history = await axios.get(
-                `${server}/users/${userInfo.user._id}/history`,
-                {
-                    headers: {
-                        Authorization: "Bearer " + userInfo.token,
-                    },
-                }
-            );
-            dispatch(initHistory(history.data));
-        } catch (error) {
-            console.log(error);
+    const saveParking = () => {
+        const payload = {
+            parking_id: parkid,
+            sector: positionInfo.sector,
+            row: positionInfo.row,
+            pos: positionInfo.position,
         }
-    };
+
+        storeItem("position", {
+            parking_id: parkid,
+            sector_id: item._id,
+            position_id: positionInfo.pos_id,
+        })
+
+        dispatch(initCurrent(payload));
+    }
+
+    // const saveParking = async () => {
+    //     try {
+    //         const userInfo = await getItem("user");
+    //         const result = await axios.post(
+    //             `${server}/users/${userInfo.user._id}/history`,
+    //             {
+    //                 'parking_id': parkid,
+    //                 "sector_id": item._id,
+    //                 "position_id": positionInfo.pos_id,
+    //             },
+    //             {
+    //                 headers: {
+    //                     Authorization: "Bearer " + userInfo.token,
+    //                 },
+    //             },
+    //         );
+            
+    //         const history = await axios.get(
+    //             `${server}/users/${userInfo.user._id}/history`,
+    //             {
+    //                 headers: {
+    //                     Authorization: "Bearer " + userInfo.token,
+    //                 },
+    //             }
+    //         );
+    //         dispatch(initHistory(history.data));
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
 
     React.useEffect(() => {
         getParkId();
@@ -180,6 +200,28 @@ const SectorItem = (props) => {
                                             </View>
                                         );
                                     } else {
+                                        if (current.parking_id == parkid && current.sector == item.name && current.row == row.name && current.pos == pos.name) {
+                                            return(
+                                                <View
+                                                    key={i}
+                                                    style={{
+                                                        height: 40,
+                                                        width: 40,
+                                                        backgroundColor:
+                                                            Themes.color.info,
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        borderRadius: 10,
+                                                    }}
+                                                >
+                                                    <Icon
+                                                        name="car"
+                                                        size={30}
+                                                        color={Themes.color.light}
+                                                    />
+                                                </View>
+                                            )
+                                        }
                                         return (
                                             <View
                                                 key={i}
@@ -349,7 +391,6 @@ const SectorItem = (props) => {
                                 style={Themes.buttonSuccess}
                                 onPress={() => {
                                     saveParking();
-                                    // setSuccessVisible(!successVisible);
                                     setModalVisible(!modalVisible);
                                 }}
                             />

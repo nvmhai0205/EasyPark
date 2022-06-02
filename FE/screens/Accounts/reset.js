@@ -32,9 +32,16 @@ const ResetPassword = ({ navigation }) => {
         try {
             setLoad(true);
             if (userInput.password === userInput.confirmpassword) {
+                
+                const data = {
+                    "email": userInput.email,
+                    "token": userInput.token,
+                    "password": userInput.password
+                }
+                
                 const result = await axios.post(
-                    `${server}/reset-password`,
-                    userInput
+                    `${server}/new-password`,
+                    data
                 );
                 console.log(result.data);
             } else {

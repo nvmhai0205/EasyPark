@@ -25,9 +25,15 @@ import { getItem, deleteItem, storeItem } from "./../../store/index";
 import axios from "axios";
 import server from "./../../link";
 
+import { useSelector, useDispatch } from "react-redux";
+import { initCurrent } from "../../redux/current";
+import { initHistory } from "../../redux/history";
+
 const HomePage = ({ navigation }) => {
     const MarkerAnim = useRef(new Animated.Value(0)).current;
     const [navtabVisible, setNavtabVisible] = React.useState(false);
+    const dispatch = useDispatch();
+    const current = useSelector((state) => state.Current.current);
 
     const [indexParkSelect, setIndexParkSelect] = React.useState("#");
 
@@ -84,6 +90,7 @@ const HomePage = ({ navigation }) => {
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
             });
+            getMakers();
         } catch (error) {
             console.log("ERROR");
         }
@@ -114,6 +121,19 @@ const HomePage = ({ navigation }) => {
         }
     )
 
+    const [parkid, setParkId] = React.useState("");
+
+    const getParkId = async () => {
+        try {
+            const value = await getItem("parkingSelect");
+            setParkId(value._id);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const [isSelectPos, setIsSelectPos] = useState(false);
+
     const getProfile = async () => {
         try {
             const userInfo = await getItem("user");
@@ -131,8 +151,50 @@ const HomePage = ({ navigation }) => {
         }
     };
 
+    const saveParking = async () => {
+        try {
+            const userInfo = await getItem("user");
+            const position = await getItem("position");
+            const result = await axios.post(
+                `${server}/users/${userInfo.user._id}/history`,
+                {
+                    'parking_id': position.parking_id,
+                    "sector_id": position.sector_id,
+                    "position_id": position.position_id,
+                },
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                },
+            );
+            
+            const history = await axios.get(
+                `${server}/users/${userInfo.user._id}/history`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + userInfo.token,
+                    },
+                }
+            );
+            dispatch(initHistory(history.data));
+            dispatch(initCurrent({
+                parking_id: "",
+                sector: "",
+                row: "",
+                pos: "",
+            }))
+            deleteItem("position");
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
-        getMakers();
+        if (current.parking_id != "") {
+            setIndexParkSelect(true)
+        }
+        getParkId();
         getProfile();
         MarkerAnimOut();
     }, []);
@@ -678,6 +740,39 @@ const HomePage = ({ navigation }) => {
                     />
                 </TouchableOpacity>
             </View>
+
+                {
+                    current.parking_id === "" ? <></> : 
+                    <View
+                        style={{
+                            height: 50,
+                            width: 120,
+                            position: "absolute",
+                            bottom: 130,
+                            right: 15,
+                        }}
+                        >
+                        <Button
+                            title="Done"
+                            style={{
+                                TouchableOpacity: {
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    width: 120,
+                                    height: 40,
+                                    borderRadius: 25,
+                                    backgroundColor: Themes.color.info,
+                                    marginVertical: 10,
+                                    marginHorizontal: 5,
+                                },
+                                Text: Themes.buttonSuccess.Text,
+                            }}
+                            onPress={() => {
+                                saveParking();
+                            }}
+                        />
+                    </View>
+                }
 
             {indexParkSelect === dataModal._id && modalVisible === false ? (
                 <View

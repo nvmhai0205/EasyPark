@@ -13,6 +13,9 @@ const Stack = createNativeStackNavigator();
 
 import { Provider } from "react-redux";
 import { store } from "./stores";
+import ForgotIndex from "./screens/Accounts/forgot.screen";
+import VerifyAccount from "./screens/Accounts/verify.screen";
+import ResetPassword from "./screens/Accounts/reset";
 
 export default function App() {
     return (
@@ -36,6 +39,9 @@ export default function App() {
                     />
                     <Stack.Screen name="SignUp" component={RegisterPage} />
                     <Stack.Screen name="SignIn" component={LoginPage} />
+                    <Stack.Screen name="ForgotIndex" component={ForgotIndex} />
+                    <Stack.Screen name="Verify" component={VerifyAccount} />
+                    <Stack.Screen name="ResetPassword" component={ResetPassword} />
                     <Stack.Screen
                         name="SelectSector"
                         component={SelectSector}

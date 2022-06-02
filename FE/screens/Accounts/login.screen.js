@@ -106,7 +106,9 @@ const LoginPage = ({ navigation }) => {
             <Link
                 style={Themes.link}
                 title="Forgot password ?"
-                onPress={() => {}}
+                onPress={() => {
+                    navigation.navigate("ForgotIndex");
+                }}
             />
 
             <View style={{ flexDirection: "row", marginTop: 10 }}>

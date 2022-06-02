@@ -37,6 +37,18 @@ const RegisterPage = ({ navigation }) => {
         }
     };
 
+    // const loginWithGoogle = async () => {
+    //     try {
+    //         const result = await axios.get(
+    //             "https://easypark212.herokuapp.com/users/login/google"
+    //         )
+
+    //         console.log(result.data);
+    //     } catch(error) {
+    //         console.log(error);
+    //     }
+    // }
+
     const Register = async () => {
         try {
             setLoad(true);
@@ -155,7 +167,9 @@ const RegisterPage = ({ navigation }) => {
             />
             <Button
                 title="Sign Up With Google"
-                onPress={() => {}}
+                onPress={() => {
+                    // loginWithGoogle();
+                }}
                 style={Themes.button}
                 icon="google"
                 size={20}

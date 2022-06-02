@@ -287,7 +287,7 @@ const Premium = ({ navigation }) => {
                                     fontWeight: "bold",
                                 }}
                             >
-                                Purchar Now
+                                Purchare now
                             </Text>
                         </TouchableOpacity>
                     </View>

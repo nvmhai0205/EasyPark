@@ -34,8 +34,8 @@ const Setting = ({ navigation }) => {
 
     const logout = async () => {
         await deleteItem("user");
-        navigation.navigate("SignIn");
         setNavtabVisible(!navtabVisible);
+        navigation.navigate("SignIn");
     };
 
     const getProfile = async () => {
